@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Mad-oais — Generator Derivate de Acces (Simulare)</title>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #11111d;
+            --bg-panel: #1e1e2f;
+            --bg-sidebar: #181826;
+            --border-color: #3f3f5a;
+            --text: #e2e8f0;
+            --text-muted: #90caf9;
+            --accent: #4fc3f7;
+            --accent-hover: #0288d1;
+            --danger: #c0392b;
+            --success: #27ae60;
+            --warning: #e67e22;
+        }
+
+        [data-theme="light"] {
+            --bg-main: #f3f4f6;
+            --bg-panel: #ffffff;
+            --bg-sidebar: #f9fafb;
+            --border-color: #d1d5db;
+            --text: #1f2937;
+            --text-muted: #4b5563;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+        }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; background-color: var(--bg-main); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; height: 100vh; overflow: hidden; }
+        
+        .app-container { display: flex; height: 100vh; width: 100vw; }
+        .config-panel { width: 380px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .resizer { width: 5px; cursor: col-resize; background: var(--border-color); }
+        .preview-panel { flex: 1; padding: 15px; display: flex; flex-direction: column; background: var(--bg-main); overflow-y: auto; }
+
+        /* Accordion */
+        .accordion-item { border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-panel); overflow: hidden; }
+        .accordion-header { width: 100%; padding: 10px; background: royalblue; color: white; border: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: bold; }
+        .accordion-content { display: none; padding: 10px; border-top: 1px solid var(--border-color); }
+        .accordion-content.open { display: block; }
+
+        /* Inputs & Buttons */
+        .input-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+        label { font-size: 11px; color: var(--text-muted); }
+        input, select { background: #2d2d44; color: var(--accent); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 3px; font-size: 12px; }
+        [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #111827; }
+        
+        .btn-action { background: var(--warning); color: white; border: none; padding: 8px 12px; border-radius: 3px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn-action:hover { opacity: 0.9; }
+        .btn-secondary { background: #2d2d44; color: var(--accent); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 3px; cursor: pointer; }
+        .btn-small { background: var(--bg-panel); color: var(--text); border: 1px solid var(--border-color); padding: 4px 8px; cursor: pointer; border-radius: 3px; }
+
+        /* File Table & List */
+        .table-wrapper { overflow-x: auto; margin-top: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th, td { border: 1px solid var(--border-color); padding: 4px 6px; text-align: left; }
+        
+        #files-list li { padding: 8px; border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+        #files-list li:hover, #files-list li.active { background: rgba(79, 195, 247, 0.15); color: var(--accent); }
+
+        .single-preview-container { flex: 1; border: 1px solid var(--border-color); background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border-radius: 3px; }
+        .view-area-large { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .view-area-large img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.15s ease; }
+
+        /* Modale */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 20px; border-radius: 6px; width: 450px; }
+        
+        .side-action-btn { background: var(--bg-panel); color: var(--text); border: 1px solid var(--border-color); width: 35px; height: 35px; border-radius: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        #column-splitter { width: 5px; cursor: col-resize; background: var(--border-color); }
+    </style>
+</head>
+<body>
+
+<script>
+    (function () {
+        var savedTheme = localStorage.getItem('appTheme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+    })();
+</script>
+
+<div class="app-container">
+<section class="config-panel" id="sidebar">
+
+    <!-- ACCORDION 1: Normalizare TIFF -->
+    <div class="accordion-item">
+        <button class="accordion-header" onclick="toggleAccordion('acc-tiff-normalize')">
+            <span>Normalizare TIFF Master</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div id="acc-tiff-normalize" class="accordion-content">
+            <div class="input-group">
+                <label>Mod normalizare</label>
+                <select id="tiff-normalize-mode">
+                    <option value="lzw">TIFF LZW (Lossless - Recomandat)</option>
+                    <option value="zip">TIFF ZIP (Lossless alternativ)</option>
+                </select>
+                <label>Rotire</label>
+                <select id="tiff-rotate">
+                    <option value="0">0°</option>
+                    <option value="90">90° ↻</option>
+                    <option value="180">180°</option>
+                    <option value="270">90° ↺</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>DPI Master</label>
+                <input type="number" id="tiff-dpi" value="300" min="72" max="1200">
+            </div>
+            <div class="input-group">
+                <label>Color Space</label>
+                <select id="tiff-colorspace">
+                    <option value="keep">Păstrează original</option>
+                    <option value="srgb">sRGB (Standardizare)</option>
+                    <option value="gray">Grayscale (Arhivare compactă)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="tiff-output-basename">Nume fișier</label>
+                <input type="text" id="tiff-output-basename" value="MASTER_TIFF">
+            </div>
+            <button id="start-tiff-normalization" class="btn-action" style="background: #27ae60;">
+                🟢 Pornește Normalizare TIFF Master
+            </button>
+        </div>
+    </div>
+
+    <!-- ACCORDION 2: Derivate Individuale -->
+    <div class="accordion-item">
+        <button class="accordion-header" onclick="toggleAccordion('acc-individual')">
+            <span>Derivate individuale - Imagini</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div id="acc-individual" class="accordion-content">
+            <div class="input-group">
+                <label>Sursă (Format existent)</label>
+                <select id="source-ext"> 
+                    <option value=".tif">.TIF / .TIFF</option>
+                    <option value=".jpg">.JPG / .JPEG</option>
+                    <option value=".png">.PNG</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Țintă (Format derivat)</label>
+                <select id="target-ext">
+                    <option value=".jpg">.JPG (Acces rapid)</option>
+                    <option value=".jp2">.JP2 (JPEG 2000 - Arhivă)</option>
+                    <option value=".pdf">.PDF (Standard)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Rezoluție (DPI)</label>
+                <input type="number" id="target-dpi" value="150">
+            </div>
+            <div class="input-group">
+                <label>Compresie: <span id="rule-q-val">95</span>%</label>
+                <input type="range" id="rule-quality" min="75" max="98" value="95" oninput="document.getElementById('rule-q-val').innerText = this.value">
+            </div>
+            <button id="add-rule" class="btn-secondary" style="margin-bottom: 8px;">➕ Adaugă regulă</button>
+            
+            <div class="table-wrapper">
+                <table id="rules-table">
+                    <thead>
+                        <tr><th>Sursă</th><th>Țintă</th><th>Setări</th><th>Acțiune</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <button id="start-migration" class="btn-action" style="margin-top: 10px;">Pornește Generarea</button>
+        </div>
+    </div>
+
+    <!-- ACCORDION 3: PDF Multipage -->
+    <div class="accordion-item">
+        <button class="accordion-header" onclick="toggleAccordion('acc-pdf')">
+            <span>PDF pagini multiple</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div id="acc-pdf" class="accordion-content">
+            <div class="input-group">
+                <label>Opțiuni PDF</label>
+                <select id="pdf-standard-select">
+                    <option value="standard" selected>PDF Standard (v1.7)</option>
+                    <option value="pdfa">PDF/A-2b (Archival)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>DPI Ghostscript</label>
+                <input type="number" id="pdf-downsample" value="150">
+            </div>
+            <div class="input-group">
+                <label>Calitate JPEG %</label>
+                <input type="number" id="pdf-quality" value="75">
+            </div>
+            <button id="btn-generate-multipage-pdf" class="btn-action" style="background-color: #e67e22;">
+                <i class="fas fa-file-pdf"></i> Generare PDF Multipage
+            </button>
+            <div style="display: flex; gap: 8px; margin-top: 6px;">
+                <button id="btn-stop-pdf" class="btn-secondary" disabled style="background-color: #c0392b; color: white; flex:1;">Stop</button>
+                <button id="btn-pause-pdf" class="btn-secondary" disabled style="background-color: #27ae60; color: white; flex:1;">Pauză</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bara de progres integrată -->
+    <div id="progress-container" style="display: none; margin-top: 10px; padding: 8px; background: #1a1a2e; border-radius: 4px;">
+        <div id="pdf-status-text" style="font-size: 11px; margin-bottom: 6px; color: #4fc3f7;">Pregătire...</div>
+        <div class="progress-bg" style="width: 100%; background: #2d2d44; height: 12px; border-radius: 2px; overflow: hidden;">
+            <div id="pdf-progress-bar" style="width: 0%; height: 100%; background: #27ae60; transition: width 0.2s;"></div>
+        </div>
+    </div>
+
+    <div style="margin-top: auto; display: flex; gap: 6px;">
+        <button id="merge-existing-pdf" class="btn-secondary" style="flex: 1; background: royalblue; color: white;">⟐ Îmbină PDF</button>
+        <button id="split-pdf-with-dialog" class="btn-secondary" style="flex: 1; background: royalblue; color: white;">⧉ Împarte PDF</button>
+    </div>
+</section>
+
+<div class="resizer" id="dragHandle"></div>
+
+<section class="preview-panel">
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <div id="drop-zone" style="flex: 1; border: 2px dashed #4fc3f7; padding: 15px; border-radius: 4px; text-align: center; background: rgba(79,195,247,0.05);">
+            <span>📥 Simulare Drag & Drop</span>
+            <p id="status-text" style="margin: 5px 0 0 0; color: var(--text-muted);">Fișiere încărcate automat pentru testare</p>
+        </div>
+        <div id="side-actions" style="display: flex; flex-direction: column; gap: 6px;">
+            <button id="refresh-page-btn" class="side-action-btn" title="Refresh" onclick="location.reload()">↻</button>
+            <button id="theme-toggle-btn" class="side-action-btn" title="Comută tema">⚪</button>
+        </div>
+    </div>
+
+    <div class="preview-header" style="margin-bottom: 10px; display: flex; justify-content: space-between;">
+        <div class="nav-controls" style="display: inline-flex; gap: 4px;">
+            <button id="prev-file" class="btn-small">⬅️</button>
+            <span id="file-counter" style="align-self: center; font-size: 12px;">1 / 3</span>
+            <button id="next-file" class="btn-small">➡️</button>
+            <button onclick="zoomImage(0.1)" class="btn-small">➕</button>
+            <button onclick="zoomImage(-0.1)" class="btn-small">➖</button>
+            <button onclick="resetZoom()" class="btn-small">⛶</button>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; flex: 1; overflow: hidden;">
+        <div id="files-list-container" style="flex: 0 0 280px; display: flex; flex-direction: column; border: 1px solid var(--border-color); border-radius: 3px;">
+            <div style="padding: 8px; font-weight: bold; background: var(--bg-panel); border-bottom: 1px solid var(--border-color);">
+                📄 Fișiere (<span id="list-file-count">3</span>)
+            </div>
+            <ul id="files-list" style="flex: 1; overflow-y: auto; list-style: none; margin: 0; padding: 0;"></ul>
+        </div>
+
+        <div id="column-splitter"></div>
+
+        <div style="flex: 1; display: flex; flex-direction: column;">
+            <div class="single-preview-container">
+                <div id="derivative-view" class="view-area-large">
+                    <img id="preview-img" src="" alt="Preview" style="display: none;">
+                    <p id="placeholder-text" class="placeholder-text">Selectează un fișier din listă...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+
+<!-- Modal Split -->
+<div id="split-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <h3><i class="fas fa-cut"></i> Configurare Split PDF</h3>
+        <p>Alege metoda de fragmentare:</p>
+        <div class="input-group">
+            <label><input type="radio" name="split-mode" value="pages" checked> Pagini per segment</label>
+            <label><input type="radio" name="split-mode" value="size"> Mărime segment (MB)</label>
+        </div>
+        <div class="input-group">
+            <input type="number" id="split-value" value="50" min="1">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+            <button id="cancel-split" class="btn-secondary">Anulează</button>
+            <button id="confirm-split" class="btn-action" style="width: auto;">Pornește Split</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- DATE SIMULATE ---
+    const mockFiles = [
+        { name: "DOC_001_MASTER.tif", size: "14.2 MB", url: "https://via.placeholder.com/800x1100/1e293b/4fc3f7?text=MASTER+TIFF+PAGE+1" },
+        { name: "DOC_002_MASTER.tif", size: "15.1 MB", url: "https://via.placeholder.com/800x1100/1e293b/69f0ae?text=MASTER+TIFF+PAGE+2" },
+        { name: "DOC_003_MASTER.tif", size: "13.8 MB", url: "https://via.placeholder.com/800x1100/1e293b/ffd54f?text=MASTER+TIFF+PAGE+3" }
+    ];
+
+    let currentIndex = 0;
+    let currentZoom = 1;
+
+    // --- INITIALIZARE & RENDER ---
+    function initSim() {
+        const listEl = document.getElementById('files-list');
+        listEl.innerHTML = '';
+        
+        mockFiles.forEach((file, idx) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>📄 ${file.name}</span><small style="color:var(--text-muted)">${file.size}</small>`;
+            li.onclick = () => selectFile(idx);
+            listEl.appendChild(li);
+        });
+
+        document.getElementById('list-file-count').innerText = mockFiles.length;
+        selectFile(0);
+    }
+
+    function selectFile(index) {
+        currentIndex = index;
+        const file = mockFiles[index];
+        const img = document.getElementById('preview-img');
+        const placeholder = document.getElementById('placeholder-text');
+
+        img.src = file.url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+
+        document.getElementById('file-counter').innerText = `${index + 1} / ${mockFiles.length}`;
+
+        const items = document.querySelectorAll('#files-list li');
+        items.forEach((item, i) => item.classList.toggle('active', i === index));
+        resetZoom();
+    }
+
+    // --- CONTROALE NAVIGATION & ZOOM ---
+    document.getElementById('prev-file').onclick = () => { if(currentIndex > 0) selectFile(currentIndex - 1); };
+    document.getElementById('next-file').onclick = () => { if(currentIndex < mockFiles.length - 1) selectFile(currentIndex + 1); };
+
+    function zoomImage(delta) {
+        currentZoom = Math.max(0.5, Math.min(3, currentZoom + delta));
+        document.getElementById('preview-img').style.transform = `scale(${currentZoom})`;
+    }
+
+    function resetZoom() {
+        currentZoom = 1;
+        document.getElementById('preview-img').style.transform = 'scale(1)';
+    }
+
+    // --- ACCORDION TOGGLE ---
+    function toggleAccordion(id) {
+        const content = document.getElementById(id);
+        const isOpen = content.classList.contains('open');
+        document.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('open'));
+        if (!isOpen) content.classList.add('open');
+    }
+
+    // --- SIMULARE PROCESE PROGRES ---
+    function runSimulationProcess(title, onComplete) {
+        const container = document.getElementById('progress-container');
+        const bar = document.getElementById('pdf-progress-bar');
+        const status = document.getElementById('pdf-status-text');
+        
+        container.style.display = 'block';
+        let progress = 0;
+        
+        const stopBtn = document.getElementById('btn-stop-pdf');
+        const pauseBtn = document.getElementById('btn-pause-pdf');
+        stopBtn.disabled = false;
+        pauseBtn.disabled = false;
+
+        const interval = setInterval(() => {
+            progress += 10;
+            bar.style.width = progress + '%';
+            status.innerText = `${title}: ${progress}% completat...`;
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                status.innerText = `✅ ${title} finalizat cu succes!`;
+                stopBtn.disabled = true;
+                pauseBtn.disabled = true;
+                if (onComplete) onComplete();
+            }
+        }, 300);
+
+        stopBtn.onclick = () => {
+            clearInterval(interval);
+            status.innerText = "❌ Proces oprit de utilizator.";
+            bar.style.width = '0%';
+            stopBtn.disabled = true;
+            pauseBtn.disabled = true;
+        };
+    }
+
+    // Event Listeners pentru simulări
+    document.getElementById('start-tiff-normalization').onclick = () => {
+        runSimulationProcess("Normalizare TIFF");
+    };
+
+    document.getElementById('start-migration').onclick = () => {
+        runSimulationProcess("Generare Derivate Imagini");
+    };
+
+    document.getElementById('btn-generate-multipage-pdf').onclick = () => {
+        runSimulationProcess("Generare PDF Multipage");
+    };
+
+    // TABEL REGULI
+    document.getElementById('add-rule').onclick = () => {
+        const src = document.getElementById('source-ext').value;
+        const tgt = document.getElementById('target-ext').value;
+        const dpi = document.getElementById('target-dpi').value;
+
+        const tbody = document.querySelector('#rules-table tbody');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${src}</td><td>${tgt}</td><td>${dpi} DPI</td><td><button onclick="this.closest('tr').remove()" class="btn-small">✕</button></td>`;
+        tbody.appendChild(tr);
+    };
+
+    // MODALE & MERGE/SPLIT
+    const splitModal = document.getElementById('split-modal');
+    document.getElementById('split-pdf-with-dialog').onclick = () => splitModal.style.display = 'flex';
+    document.getElementById('cancel-split').onclick = () => splitModal.style.display = 'none';
+    document.getElementById('confirm-split').onclick = () => {
+        splitModal.style.display = 'none';
+        runSimulationProcess("Split PDF");
+    };
+
+    document.getElementById('merge-existing-pdf').onclick = () => {
+        runSimulationProcess("Îmbinare PDF-uri");
+    };
+
+    // TEMA TOGGLE
+    document.getElementById('theme-toggle-btn').onclick = () => {
+        const current = document.body.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', next);
+        localStorage.setItem('appTheme', next);
+        document.getElementById('theme-toggle-btn').innerText = next === 'dark' ? '⚪' : '⚫';
+    };
+
+    // Pornire simulare
+    initSim();
+</script>
+</body>
+</html>

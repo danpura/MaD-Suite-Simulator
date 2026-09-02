@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaD-oais v3.2.2</title>
+  <style>
+    :root {
+      --bg-dark: #1f1f2e;
+      --bg-header: #171722;
+      --bg-panel: #272738;
+      --bg-sidebar: #222232;
+      --accent-orange: #c86d12;
+      --accent-blue: #3b82f6;
+      --btn-bg: #2d4360;
+      --btn-green: #2e7d32;
+      --btn-hover: #3b587e;
+      --text-main: #d0d0e0;
+      --border-color: #1a1a24;
+      --console-bg: #111118;
+      --console-green: #00ff66;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    /* Header Bar */
+    header {
+      background-color: var(--bg-header);
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand {
+      font-weight: bold;
+      font-size: 13px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-bar input {
+      background: #14141d;
+      border: 1px solid #333348;
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 3px;
+      width: 320px;
+      font-size: 12px;
+    }
+
+    .search-bar input[type="date"] {
+      width: 130px;
+    }
+
+    /* App Container */
+    .app-container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 36px);
+    }
+
+    /* Left Sidebar */
+    .sidebar-left {
+      width: 250px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-title {
+      font-size: 11px;
+      font-weight: bold;
+      color: #9090a8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tree-view {
+      flex: 1;
+      overflow-y: auto;
+      padding: 5px 0;
+    }
+
+    .tree-folder {
+      padding: 6px 12px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #e0e0f0;
+    }
+    .tree-folder.selected { background-color: #34344d; color: #fff; }
+
+    .tree-file {
+      padding: 5px 12px 5px 28px;
+      cursor: pointer;
+      color: #b0b0cc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .tree-file:hover { background-color: #2a2a3e; color: #fff; }
+    .tree-file.selected { background-color: #34344d; color: #fff; }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      background-color: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      padding: 10px;
+      gap: 10px;
+    }
+
+    /* Progress Panel */
+    .progress-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 8px 12px;
+      display: none;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #14141d;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--accent-blue);
+      transition: width 0.2s ease;
+    }
+
+    /* Center Display Area */
+    .center-display {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .folder-title-view {
+      display: none;
+      font-size: 16px;
+      font-weight: bold;
+      color: #ffffff;
+      margin-top: 40px;
+    }
+
+    .image-preview-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 90%;
+      max-height: 85%;
+    }
+
+    .image-preview-container img {
+      max-width: 100%;
+      max-height: 65vh;
+      border: 1px solid #333;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .image-subtext {
+      margin-top: 8px;
+      color: #707088;
+      font-size: 12px;
+    }
+
+    /* Console Overlay */
+    .console-overlay {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      height: 350px;
+      background-color: var(--console-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 10px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--console-green);
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+      gap: 3px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+    }
+
+    .console-line { line-height: 1.3; }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 8px;
+      height: 12px;
+      background-color: var(--console-green);
+      margin-left: 4px;
+      animation: blink 1s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* Right Sidebar */
+    .sidebar-right {
+      width: 340px;
+      background-color: var(--bg-sidebar);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .right-header {
+      padding: 10px 12px;
+      font-weight: bold;
+      font-size: 13px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-sidebar);
+    }
+
+    .accordion-item {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .accordion-title {
+      padding: 8px 12px;
+      font-weight: bold;
+      font-size: 11px;
+      color: #b0b0cc;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-sidebar);
+    }
+
+    .accordion-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 0 0 4px 0;
+    }
+
+    /* Top Action Dual Buttons */
+    .action-row-top {
+      display: flex;
+      width: 100%;
+    }
+
+    .btn-receptie {
+      flex: 1;
+      background-color: var(--accent-orange);
+      color: #fff;
+      border: none;
+      padding: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-explorare {
+      flex: 1;
+      background-color: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .subgroup-header {
+      background-color: var(--btn-bg);
+      color: #ffffff;
+      padding: 6px 10px;
+      font-size: 12px;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      margin-top: 2px;
+    }
+
+    .subgroup-header.green { background-color: var(--btn-green); }
+
+    .subgroup-body {
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      background-color: #1a1a26;
+      padding: 2px 0;
+    }
+
+    .subgroup-body.open { display: flex; }
+
+    .btn-sub-action {
+      background-color: #385375;
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-sub-action:hover { background-color: var(--btn-hover); }
+
+    /* Details Panel Styling */
+    .details-box {
+      padding: 10px 12px;
+      font-size: 11px;
+      color: #c0c0d0;
+      line-height: 1.5;
+    }
+
+    .details-field {
+      margin-bottom: 6px;
+      word-break: break-all;
+    }
+
+    .details-label {
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .uuid-highlight {
+      background-color: #1d3326;
+      color: #00ffaa;
+      padding: 1px 4px;
+      border-radius: 2px;
+    }
+
+    .event-card {
+      border-bottom: 1px solid #2d2d3f;
+      padding: 8px 0;
+    }
+
+    .event-card:last-child { border-bottom: none; }
+    .event-title { font-weight: bold; color: #89b4fa; }
+    .event-time { color: #888; font-size: 10px; }
+
+/* Stiluri necesare pentru expandarea filtrelor din rezultate */
+  .corupte-content.open, .lipsa-content.open {
+    max-height: 200px !important;
+  }
+  .arrow.rotated {
+    transform: rotate(180deg);
+  }
+  
+ /* Stil pentru butoane dezactivate din panoul drept */
+.btn-sub-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background-color: #2a3a50 !important;
+}
+/* Containerul header-ului din sidebar */
+.sidebar-header {
+  display: flex;
+  flex-direction: column; /* Așază logo-ul deasupra textului */
+  align-items: center;    /* Centrează orizontal logo-ul și textul */
+  gap: 8px;               /* Spațiu între logo și text */
+  padding: 10px 0;
+}
+
+/* Stilul și dimensiunea logo-ului GIF */
+.sidebar-logo {
+  width: 60px;       /* Ajustează lățimea după preferință */
+  height: auto;      /* Păstrează proporțiile imaginii */
+  max-width: 100%;   /* Împiedică depășirea laturii containerului */
+  object-fit: contain;
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">MaD-oais ☰</div>
+    <div class="search-bar">
+      <input type="text" placeholder="Căutare în evidență (nume fișier, pachet, hash, uuid...)">
+      <input type="date" value="2026-08-24">
+    </div>
+  </header>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Stânga -->
+    <div class="sidebar-left">
+		<div class="sidebar-header">
+		  <img src="logo.gif" alt="Logo" class="sidebar-logo">
+		  <span class="panel-title">Obiecte Digitale</span>
+		</div>
+      <div class="tree-view" id="tree-view"></div>
+    </div>
+
+    <!-- Zona Centrală -->
+    <div class="main-content">
+      <div class="progress-panel" id="progress-panel">
+        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+          <span id="progress-status">Procesare...</span>
+          <span id="progress-percent">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="center-display" id="center-display">
+        <div class="folder-title-view" id="folder-title-view">
+          Folder: TM-FD-12345-2026.08.19_VALIDAT (2)
+        </div>
+        
+        <div class="image-preview-container" id="image-preview">
+          <img id="preview-img" src="" alt="Preview">
+          <div class="image-subtext">Click pentru viewer extern</div>
+        </div>
+      </div>
+
+      <!-- Consola Ingestie / Scanare -->
+      <div class="console-overlay" id="console-overlay" onclick="closeConsole()">
+        <div id="console-logs"></div>
+        <div><span class="cursor-blink"></span></div>
+      </div>
+    </div>
+
+    <!-- Sidebar Dreapta -->
+    <div class="sidebar-right">
+      <div class="right-header">
+        <span>informații despre obiect</span>
+        <span>☰</span>
+      </div>
+
+      <!-- ACȚIUNI -->
+      <div class="accordion-item">
+        <div class="accordion-title" onclick="toggleSection('actions-body', 'arrow-actions')">
+          <span>ACȚIUNI</span>
+          <span id="arrow-actions">▼</span>
+        </div>
+        
+        <div class="accordion-content" id="actions-body">
+          <div class="action-row-top">
+            <button class="btn-receptie" id="btn-receptie">Recepție SIP</button>
+            <button class="btn-explorare" id="btn-explorare">Explorare folder</button>
+          </div>
+
+          <button class="subgroup-header" onclick="toggleSubgroup('group-post-ingestie')">Acțiuni post ingestie</button>
+<div class="subgroup-body" id="group-post-ingestie">
+  <button class="btn-sub-action" id="btn-antivirus">Scanare Antivirus Pachet</button>
+  <button class="btn-sub-action" id="btn-stego">Verificare Criptare & Steganografie</button>
+  <button class="btn-sub-action" id="btn-integrity">Extensii & Duplicate</button>
+  <button class="btn-sub-action" id="btn-technical">Analiză tehnică</button>
+  <button class="btn-sub-action" id="derivateBtn">Generare derivate</button>
+  <button class="btn-sub-action" id="transferObjectsBtn">Transfer obiecte</button>
+</div>
+
+          <button class="subgroup-header green" onclick="toggleSubgroup('group-prezervare')">Prezervare</button>
+          <div class="subgroup-body" id="group-prezervare">
+            <button class="btn-sub-action">Audit integritate & replicare</button>
+            <button class="btn-sub-action">Programare audit automat</button>
+          </div>
+
+          <button class="subgroup-header green" onclick="toggleSubgroup('group-raport')">Raport Ingestie</button>
+          <div class="subgroup-body" id="group-raport">
+            <button class="btn-sub-action" onclick="openReport()">Deschide Raport Ingestie (PDF/HTML)</button>
+          </div>
+
+   
+        </div>
+      </div>
+
+      <!-- METADATE -->
+      <div class="accordion-item">
+        <div class="accordion-title" onclick="toggleSection('metadata-body', 'arrow-metadata')">
+          <span>METADATE</span>
+          <span id="arrow-metadata">▼</span>
+        </div>
+        <div class="accordion-content" id="metadata-body">
+          <div class="details-box" id="metadata-content">
+            <div style="color: #707088;">Selectați un folder sau fișier.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ISTORIC -->
+      <div class="accordion-item">
+        <div class="accordion-title" onclick="toggleSection('history-body', 'arrow-history')">
+          <span>ISTORIC</span>
+          <span id="arrow-history">▼</span>
+        </div>
+        <div class="accordion-content" id="history-body">
+          <div class="details-box" id="history-content">
+            <div style="color: #707088;">Fără istoric recent.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+  // Starea globală a aplicației
+let isFolderLoaded = false;
+
+function updatePostIngestButtonsState() {
+  const container = document.getElementById('group-post-ingestie');
+  if (!container) return;
+
+  const buttons = container.querySelectorAll('.btn-sub-action');
+  buttons.forEach(btn => {
+    btn.disabled = !isFolderLoaded;
+    if (!isFolderLoaded) {
+      btn.title = "Trebuie mai întâi să încărcați sau să explorați un pachet/folder!";
+    } else {
+      btn.removeAttribute('title');
+    }
+  });
+}
+    function toggleSection(contentId, arrowId) {
+      const content = document.getElementById(contentId);
+      const arrow = document.getElementById(arrowId);
+      if (content.style.display === 'none') {
+        content.style.display = 'flex';
+        arrow.textContent = '▼';
+      } else {
+        content.style.display = 'none';
+        arrow.textContent = '▲';
+      }
+    }
+
+    function toggleSubgroup(groupId) {
+      document.getElementById(groupId).classList.toggle('open');
+    }
+
+    function openReport() {
+      window.open('TM-FD-12345-2026.08.24_VALIDAT/Certificat_Audit_TM-FD-12345-2026.08.24.html', '_blank');
+    }
+
+    function closeConsole() {
+      document.getElementById('console-overlay').style.display = 'none';
+    }
+
+    // Button Explorare Folder Mode
+    document.getElementById('btn-explorare').addEventListener('click', () => {
+      const treeView = document.getElementById('tree-view');
+      treeView.innerHTML = `
+        <div class="tree-folder" onclick="showFolderDetails()">📁 Test_imagini (2)</div>
+        <div class="tree-file" onclick="selectImage('Test_imagini/TM-FD-01194-1901.jpg', 'TM-FD-01194-1901.jpg', this)">📄 TM-FD-01194-1901.jpg</div>
+        <div class="tree-file" onclick="selectImage('Test_imagini/TM-FD-01194-1902.jpg', 'TM-FD-01194-1902.jpg', this)">📄 TM-FD-01194-1902.jpg</div>
+        <div class="tree-file" onclick="selectImage('Test_imagini/TM-FD-01194-1903.jpg', 'TM-FD-01194-1903.jpg', this)">📄 TM-FD-01194-1903.jpg</div>
+        <div class="tree-file" onclick="selectImage('Test_imagini/TM-FD-01194-1904.jpg', 'TM-FD-01194-1904.jpg', this)">📄 TM-FD-01194-1904.jpg</div>
+		<div class="tree-file" onclick="selectImage('Test_imagini/TM-FD-01194-1905.jpg', 'TM-FD-01194-1905.jpg', this)">📄 TM-FD-01194-1905.jpg</div>
+      `;
+isFolderLoaded = true;
+  updatePostIngestButtonsState();
+    });
+
+    // WORKFLOW SIMULARE RECEPȚIE SIP
+    document.getElementById('btn-receptie').addEventListener('click', () => {
+      const consoleOverlay = document.getElementById('console-overlay');
+      const consoleLogs = document.getElementById('console-logs');
+      const progressPanel = document.getElementById('progress-panel');
+      const progressBar = document.getElementById('progress-bar');
+      const progressPercent = document.getElementById('progress-percent');
+      const progressStatus = document.getElementById('progress-status');
+
+      progressStatus.textContent = "Procesare SIP...";
+      consoleLogs.innerHTML = '';
+      consoleOverlay.style.display = 'flex';
+      progressPanel.style.display = 'block';
+
+      const steps = [
+        { text: '[8:42:41 AM] Inițiere proces ingestie SIP...', pct: 5 },
+        { text: '[8:42:41 AM] Vă rugăm selectați Arhiva ZIP a pachetului...', pct: 15 },
+        { text: '[8:42:50 AM] ZIP selectat: TM-FD-12345-2026.08.24.zip', pct: 30 },
+        { text: '[8:42:50 AM] Vă rugăm selectați Manifestul Extern (ME-SIP.json)...', pct: 40 },
+        { text: '[8:42:53 AM] Manifest selectat: ME-SIP_TM-FD-12345-2026.08.24.json', pct: 50 },
+        { text: '[8:42:53 AM] Se verifică integritatea și se procesează datele...', pct: 65 },
+        { text: '[8:42:57 AM] Manifest extern [ME-SIP_TM-FD-12345-2026.08.24.json] valid conform cu [MI-SIP_TM-FD-12345-2026.08.24.json] »', pct: 75 },
+        { text: '[8:42:57 AM] Validare încrucișată finalizată cu succes »', pct: 80 },
+        { text: '[8:42:57 AM] Pachet SIP complet »', pct: 85 },
+        { text: '[8:42:58 AM] Structura conformă cu ME-SIP »', pct: 90 },
+        { text: '[8:42:58 AM] Integritate SIP validată »', pct: 95 },
+        { text: '[8:42:58 AM] Succes: Ingestie completă: 2 fișiere validate. Raport generat în folder.', pct: 98 },
+        { text: '[8:42:58 AM] Pachet [TM-FD-12345-2026.08.24] înregistrat în DB folosind [MI-SIP_TM-FD-12345-2026.08.24.json].', pct: 99 },
+        { text: '[8:42:58 AM] Se afișează structura ierarhică a pachetului. TM-FD-12345-2026.08.24_VALIDAT', pct: 100 },
+        { text: '[8:42:58 AM] Timp total procesare: 1.2 secunde', pct: 100 },
+        { text: '[8:42:58 AM] Viteză medie: 1.67 fișiere/secundă', pct: 100 },
+        { text: '[8:42:58 AM] Click pe consolă pentru a o închide █', pct: 100 }
+      ];
+
+      let stepIdx = 0;
+      const interval = setInterval(() => {
+        if (stepIdx < steps.length) {
+          const line = document.createElement('div');
+          line.className = 'console-line';
+          line.textContent = steps[stepIdx].text;
+          consoleLogs.appendChild(line);
+          consoleOverlay.scrollTop = consoleOverlay.scrollHeight;
+
+          progressBar.style.width = steps[stepIdx].pct + '%';
+          progressPercent.textContent = steps[stepIdx].pct + '%';
+
+          stepIdx++;
+        } else {
+          clearInterval(interval);
+          loadIngestedPackage();
+          openReport();
+        }
+      }, 250);
+    });
+
+    // WORKFLOW SIMULARE SCANARE ANTIVIRUS
+    document.getElementById('btn-antivirus').addEventListener('click', () => {
+      const consoleOverlay = document.getElementById('console-overlay');
+      const consoleLogs = document.getElementById('console-logs');
+      const progressPanel = document.getElementById('progress-panel');
+      const progressBar = document.getElementById('progress-bar');
+      const progressPercent = document.getElementById('progress-percent');
+      const progressStatus = document.getElementById('progress-status');
+
+      progressStatus.textContent = "Scanare Antivirus în desfășurare...";
+      consoleLogs.innerHTML = '';
+      consoleOverlay.style.display = 'flex';
+      progressPanel.style.display = 'block';
+
+      const steps = [
+        { text: '[10:48:41 AM] Pornire scanare antivirus pe: TM-FD-12345-2026.08.19_VALIDAT', pct: 20 },
+        { text: '[10:48:41 AM] Cale: C:\\Users\\Puribus\\Storage\\SIP_TM-FD-12345-2026.08.19\\TM-FD-12345-2026.08.19_VALIDAT', pct: 40 },
+        { text: '[10:48:41 AM] Motor: Windows Defender (MpCmdRun)', pct: 65 },
+        { text: '[10:48:41 AM] Data scanării: 24.08.2026, 10:48:41', pct: 85 },
+        { text: '[10:48:41 AM] Scanare finalizată cu succes', pct: 95 },
+        { text: '[10:48:41 AM] Rezultat: Curat (fără amenințări)', pct: 100 },
+        { text: '[10:48:41 AM] Click pe consolă pentru a o închide █', pct: 100 }
+      ];
+
+      let stepIdx = 0;
+      const interval = setInterval(() => {
+        if (stepIdx < steps.length) {
+          const line = document.createElement('div');
+          line.className = 'console-line';
+          line.textContent = steps[stepIdx].text;
+          consoleLogs.appendChild(line);
+          consoleOverlay.scrollTop = consoleOverlay.scrollHeight;
+
+          progressBar.style.width = steps[stepIdx].pct + '%';
+          progressPercent.textContent = steps[stepIdx].pct + '%';
+
+          stepIdx++;
+        } else {
+          clearInterval(interval);
+          addAntivirusEventToHistory();
+        }
+      }, 300);
+    });
+
+    function addAntivirusEventToHistory() {
+      const historyContent = document.getElementById('history-content');
+      const newCard = document.createElement('div');
+      newCard.className = 'event-card';
+      newCard.innerHTML = `
+        <div class="event-time">24 august 2026 la 07:48:41</div>
+        <div class="event-title">Tip eveniment: antivirus scan</div>
+        <div>Detalii: Scanare antivirus curată – 4 fișiere</div>
+        <div>Agent: Windows Defender MpCmdRun</div>
+      `;
+      historyContent.insertBefore(newCard, historyContent.firstChild);
+    }
+
+    function loadIngestedPackage() {
+      const treeView = document.getElementById('tree-view');
+      treeView.innerHTML = `
+        <div class="tree-folder selected" onclick="selectFolder('TM-FD-12345-2026.08.19_VALIDAT', this)">📁 TM-FD-12345-2026.08.19_VALIDAT (2)</div>
+        <div class="tree-file" onclick="selectImage('TM-FD-12345-2026.08.24_VALIDAT/TM-FD-01194-1901.jpeg', 'TM-FD-01194-1901.jpeg', this)">📄 TM-FD-01194-1901.jpeg</div>
+        <div class="tree-file" onclick="selectImage('TM-FD-12345-2026.08.24_VALIDAT/TM-FD-01194-1902.jpeg', 'TM-FD-01194-1902.jpeg', this)">📄 TM-FD-01194-1902.jpeg</div>
+      `;
+      showFolderDetails();
+isFolderLoaded = true;
+  updatePostIngestButtonsState();
+    }
+
+    function selectFolder(folderName, el) {
+      document.querySelectorAll('.tree-folder, .tree-file').forEach(e => e.classList.remove('selected'));
+      if(el) el.classList.add('selected');
+      showFolderDetails();
+    }
+
+    function showFolderDetails() {
+      document.getElementById('image-preview').style.display = 'none';
+      document.getElementById('folder-title-view').style.display = 'block';
+
+      // Populeaza METADATE Folder
+      document.getElementById('metadata-content').innerHTML = `
+        <div class="details-field"><span class="details-label">Denumire:</span> TM-FD-12345-2026.08.19_VALIDAT (2)</div>
+        <div class="details-field"><span class="details-label">Tip:</span> folder</div>
+        <div class="details-field"><span class="details-label">Cale:</span> C:\\Users\\Puribus\\Storage\\SIP_TM-FD-12345-2026.08.19\\TM-FD-12345-2026.08.19_VALIDAT</div>
+        <div class="details-field"><span class="details-label">MIME (extensie):</span> application/octet-stream</div>
+        <div class="details-field"><span class="details-label">Modificat:</span> 24.08.2026, 09:55:28</div>
+        <div class="details-field"><span class="details-label">UUID pachet:</span> <span class="uuid-highlight">db18bc38-43bd-4f9e-9d3d-e803b1517046</span></div>
+      `;
+
+      // Populeaza ISTORIC Folder
+      document.getElementById('history-content').innerHTML = `
+        <div class="event-card">
+          <div class="event-time">24 august 2026 la 09:55:30</div>
+          <div class="event-title">Tip eveniment: ingestion</div>
+          <div>Detalii: "Folder încărcat și analizat în MaD-oais"</div>
+          <div>Agent: MaD-oais - user: Puribus @ Lenovo-T470</div>
+        </div>
+        <div class="event-card">
+          <div class="event-time">24 august 2026 la 09:55:29</div>
+          <div class="event-title">Tip eveniment: metadata extracted</div>
+          <div>Detalii: Extracție completă metadate tehnice cu ExifTool</div>
+          <div>Agent: ExifTool v13.43 (MaD-oais, utilizator: Puribus)</div>
+        </div>
+        <div class="event-card">
+          <div class="event-time">24 august 2026 la 09:55:29</div>
+          <div class="event-title">Tip eveniment: ingestion fixity check</div>
+          <div>Detalii: Hash match OK: bacd7b01...</div>
+          <div>Agent: MaD-oais</div>
+        </div>
+      `;
+    }
+
+    function selectImage(path, filename, element) {
+      document.querySelectorAll('.tree-folder, .tree-file').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+
+      document.getElementById('folder-title-view').style.display = 'none';
+      const previewContainer = document.getElementById('image-preview');
+      const previewImg = document.getElementById('preview-img');
+      
+      previewImg.src = path;
+      previewContainer.style.display = 'flex';
+
+      // Populeaza METADATE Fișier
+      document.getElementById('metadata-content').innerHTML = `
+        <div class="details-field"><span class="details-label">Denumire:</span> ${filename}</div>
+        <div class="details-field"><span class="details-label">Tip:</span> fișier</div>
+        <div class="details-field"><span class="details-label">Cale:</span> C:\\Users\\Puribus\\Storage\\SIP_TM-FD-12345-2026.08.19\\TM-FD-12345-2026.08.19_VALIDAT\\${filename}</div>
+        <div class="details-field"><span class="details-label">MIME (extensie):</span> image/jpeg</div>
+        <div class="details-field"><span class="details-label">MIME (ExifTool):</span> image/jpeg</div>
+        <div class="details-field"><span class="details-label">PUID (PRONOM):</span> x-fmt/391</div>
+        <div class="details-field"><span class="details-label">PDF/A Validation:</span> SKIP – N/A</div>
+        <div class="details-field"><span class="details-label">Modificat:</span> 2/17/2026, 11:00:02 AM</div>
+        <div class="details-field"><span class="details-label">SHA‑256:</span><br><code>bacd7b015c6769c1ed20f95aeb0a93a220ef54a55a72ab98416aefefef3a9579</code></div>
+        <div class="details-field"><span class="details-label">UUID:</span> 1222713f-9c7c-4f5e-b811-0be0e4130f8c</div>
+      `;
+
+      // Populeaza ISTORIC Fișier
+      document.getElementById('history-content').innerHTML = `
+        <div class="event-card">
+          <div class="event-time">24 august 2026 la 08:42:54</div>
+          <div class="event-title">Tip eveniment: metadata extracted</div>
+          <div>Detalii: Extracție completă metadate tehnice cu ExifTool</div>
+          <div>Agent: ExifTool v13.43 (MaD-oais, utilizator: Puribus)</div>
+          <div>Rezultat: Succes</div>
+        </div>
+        <div class="event-card">
+          <div class="event-time">24 august 2026 la 08:42:54</div>
+          <div class="event-title">Tip eveniment: ingestion fixity check</div>
+          <div>Detalii: Hash match OK: bacd7b015c6769c1ed20f9...</div>
+          <div>Agent: MaD-oais</div>
+          <div>Rezultat: Succes</div>
+        </div>
+        <div class="event-card">
+          <div class="event-time">24 august 2026 la 08:42:54</div>
+          <div class="event-title">Tip eveniment: format identification</div>
+          <div>Detalii: { "mime": "image/jpeg", "puid": "x-fmt/391", "formatName": "Exchangeable Image File Format (Compressed)", "version": "2.2" }</div>
+          <div>Agent: ExifTool v13.43 + Siegfried v1.11.4</div>
+          <div>Rezultat: Succes</div>
+        </div>
+      `;
+    }
+  </script>
+    <script>
+// Selectăm butonul "Transfer obiecte"
+// Selectăm butonul "Transfer obiecte"
+const transferBtn = document.getElementById('transferObjectsBtn');
+
+if (transferBtn) {
+    transferBtn.addEventListener('click', () => {
+        // Protecție: Execută doar dacă un folder este încărcat
+        if (typeof isFolderLoaded !== 'undefined' && !isFolderLoaded) return;
+
+        // 1. Deschide ocfl.html într-o fereastră separată
+        window.open('ocfl.html', '_blank', 'width=1200,height=800');
+
+        // 2. Declanșează Progress Bar-ul și Consola
+        const consoleOverlay = document.getElementById('console-overlay');
+        const consoleLogs = document.getElementById('console-logs');
+        const progressPanel = document.getElementById('progress-panel');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressStatus = document.getElementById('progress-status');
+
+        if (progressStatus && consoleOverlay && progressPanel) {
+            progressStatus.textContent = "Transfer obiecte către OCFL...";
+            consoleLogs.innerHTML = '';
+            consoleOverlay.style.display = 'flex';
+            progressPanel.style.display = 'block';
+
+            const steps = [
+                { text: '[03:08:10 PM] Inițiere proces de transfer către depozitul OCFL v1...', pct: 20 },
+                { text: '[03:08:10 PM] Sincronizare structură directoare...', pct: 50 },
+                { text: '[03:08:11 PM] Pachete pregătite pentru ingestionare...', pct: 80 },
+                { text: '[03:08:11 PM] Transfer complet către OCFL — 1 obiect(e) trimise cu succes.', pct: 100 },
+                { text: '[03:08:11 PM] Click pe consolă pentru a o închide █', pct: 100 }
+            ];
+
+            let stepIdx = 0;
+            const interval = setInterval(() => {
+                if (stepIdx < steps.length) {
+                    const line = document.createElement('div');
+                    line.className = 'console-line';
+                    line.textContent = steps[stepIdx].text;
+                    consoleLogs.appendChild(line);
+                    consoleOverlay.scrollTop = consoleOverlay.scrollHeight;
+
+                    progressBar.style.width = steps[stepIdx].pct + '%';
+                    progressPercent.textContent = steps[stepIdx].pct + '%';
+
+                    stepIdx++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 250);
+        }
+
+        // 3. Mesaje în consolă dev-tools (opțional)
+        console.log("%c[OCFL TRANSFER INTERACTION]", "color: #10b981; font-weight: bold; font-size: 12px;");
+        console.log("Inițiere proces de transfer obiecte către depozitul OCFL v1...");
+
+        // 4. Adaugă automat evenimentul în Istoricul Pachetului din panou
+        if (typeof addEventToHistory === 'function') {
+            addEventToHistory('ocfl-transfer', 'Transfer complet către OCFL — 1 obiect(e) trimise.');
+        }
+    });
+}
+  </script>
+<style>
+  /* Stiluri pentru expandarea secțiunilor din rezultate */
+  .corupte-content.open, .lipsa-content.open {
+    max-height: 200px !important;
+  }
+  .arrow.rotated {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+updatePostIngestButtonsState();
+  // 1. Event listener pentru butonul derivate (dacă există)
+  const derivateBtn = document.getElementById('derivateBtn');
+  if (derivateBtn) {
+    derivateBtn.addEventListener('click', function() {
+      window.open('derivate.html', '_blank');
+    });
+  }
+
+  // 2. Event listener pentru butonul de Steganografie
+  const btnStego = document.getElementById('btn-stego');
+  if (btnStego) {
+    btnStego.addEventListener('click', () => {
+      showCryptoStegoModal();
+    });
+  }
+
+});
+
+function showCryptoStegoModal() {
+  // Preluăm sau creăm containerul central (overlay)
+  let modalContainer = document.getElementById('custom-modal-overlay');
+  if (!modalContainer) {
+    modalContainer = document.createElement('div');
+    modalContainer.id = 'custom-modal-overlay';
+    modalContainer.style.cssText = `
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.75); display: flex; align-items: center;
+      justify-content: center; z-index: 9999;
+    `;
+    document.body.appendChild(modalContainer);
+  }
+
+  // HTML-ul din crypto-stego-scan-template integrat direct în JS
+  const templateHTML = `
+    <div class="audit-wizard">
+        <h3 style="margin-top:0; color:#4fc3f7;">Securitate Pachet — Criptare & Steganografie</h3>
+
+        <!-- ANALIZĂ RAPIDĂ STORAGE -->
+        <div id="audit-discovery-box" style="margin-bottom:15px; font-size:13px; color:#ccc;">
+            <div>🔍 Analiză structurală în curs...</div>
+        </div>
+
+        <!-- CONFIGURARE SIMPLIFICATĂ -->
+        <div style="margin-top:15px;">
+            <h3 style="font-size:14px; color:#4fc3f7; margin-bottom:5px;">Opțiuni Analiză Securitate</h3>
+            <p style="font-size:11px; color:#888; margin-bottom:10px; margin-top:0;">Sistemul va examina pachetul pentru a depista vulnerabilități ascunse:</p>
+            
+            <label style="display:block; margin-bottom:5px; font-size:13px;"><input type="checkbox" id="opt-encrypted" checked disabled> Identificare fișiere criptate & parolate</label>
+            <label style="display:block; margin-bottom:5px; font-size:13px;"><input type="checkbox" id="opt-entropy" checked disabled> Verificare entropie ridicată</label>
+            <label style="display:block; margin-bottom:5px; font-size:13px;"><input type="checkbox" id="opt-stego" checked disabled> Identificare steganografie suspectă</label>
+        </div>
+
+        <div class="wizard-actions" style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+            <button id="crypto-back" class="btn-secondary" style="padding:6px 14px; cursor:pointer;">Back</button>
+            <button id="crypto-start" class="btn-primary" style="background:#0288d1; color:#fff; border:none; padding:6px 14px; border-radius:4px; cursor:pointer;">Start analiză</button>
+        </div>
+    </div>
+  `;
+  
+  modalContainer.innerHTML = `
+    <div style="background: #1e1e1e; color: #fff; padding: 20px; border-radius: 8px; width: 450px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+      ${templateHTML}
+    </div>
+  `;
+  modalContainer.style.display = 'flex';
+
+  // Handler buton "Back"
+  const backBtn = document.getElementById('crypto-back');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      modalContainer.style.display = 'none';
+    });
+  }
+
+  // Handler buton "Start analiză"
+  const startBtn = document.getElementById('crypto-start');
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      runCryptoStegoAnalysis(modalContainer);
+    });
+  }
+}
+
+function runCryptoStegoAnalysis(modalContainer) {
+  const discoveryBox = modalContainer.querySelector('#audit-discovery-box');
+  if (discoveryBox) {
+    discoveryBox.innerHTML = '<div style="color: #4fc3f7;">⏳ Analiză structurală în curs (verificare entropie & payload)...</div>';
+  }
+
+  // Simulează timpul de procesare (1.5 secunde)
+  setTimeout(() => {
+    renderStegoResults(modalContainer);
+    addStegoEventToHistory();
+  }, 1500);
+}
+
+function renderStegoResults(modalContainer) {
+  const pachetStatus = "CURAT / NEAFECTAT";
+  const fixityColor = "#66bb6a"; // verde
+
+  const resultsHTML = `
+    <div class="audit-summary-dashboard" style="background: #1e1e1e; color: #fff; padding: 20px; border-radius: 8px; width: 500px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
+        <h3 style="margin: 0; color: #4fc3f7; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+          <span>📊 Rezumat Audit Securitate</span>
+        </h3>
+        <div style="font-size: 13px; font-weight: bold; color: ${fixityColor}; background: transparent; padding: 4px 12px; border: 1px solid ${fixityColor};">
+          ${pachetStatus}
+        </div>
+      </div>
+
+      <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+        <!-- Secțiune Master Corupt / Criptat -->
+        <div style="background: #2a1a1a; padding: 12px; border-radius: 4px; border: 1px solid #e57373;">
+          <div 
+            onclick="this.parentElement.querySelector('.corupte-content').classList.toggle('open'); this.querySelector('.arrow').classList.toggle('rotated')"
+            style="font-size: 11px; color: #e57373; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;"
+          >
+            <span id="label-corupte">MASTER CRIPTAT (0)</span>
+            <span class="arrow" style="display: inline-block; transition: transform 0.2s; font-size: 10px;">▼</span>
+          </div>
+          <div class="corupte-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+            <div id="ui-corupte-list" style="max-height: 120px; overflow-y: auto; font-size: 11px; color: #eee; margin-top: 8px;">Nicio problemă detectată</div>
+          </div>
+        </div>
+
+        <!-- Secțiune Steganografie -->
+        <div style="background: #2a1a1a; padding: 12px; border-radius: 4px; border: 1px solid #ff8a80;">
+          <div 
+            onclick="this.parentElement.querySelector('.lipsa-content').classList.toggle('open'); this.querySelector('.arrow').classList.toggle('rotated')"
+            style="font-size: 11px; color: #ff8a80; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;"
+          >
+            <span id="label-lipsa">STEGANOGRAFIE (0)</span>
+            <span class="arrow" style="display: inline-block; transition: transform 0.2s; font-size: 10px;">▼</span>
+          </div>
+          <div class="lipsa-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+            <div id="ui-lipsa-list" style="max-height: 120px; overflow-y: auto; font-size: 11px; color: #eee; margin-top: 8px;">Fără payload ascuns</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: right; margin-top: 15px;">
+        <button id="btn-close-modal" class="btn-secondary" style="padding: 6px 16px; cursor: pointer;">Închide</button>
+      </div>
+    </div>
+  `;
+
+  modalContainer.innerHTML = resultsHTML;
+
+  const closeBtn = document.getElementById('btn-close-modal');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      modalContainer.style.display = 'none';
+    });
+  }
+}
+
+function addStegoEventToHistory() {
+  const historyContent = document.getElementById('history-content');
+  if (!historyContent) return;
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('ro-RO');
+
+  const newCard = document.createElement('div');
+  newCard.className = 'event-card';
+  newCard.innerHTML = `
+    <div class="event-time">${dateStr} la ${timeStr}</div>
+    <div class="event-title">Tip eveniment: encryption & steganography check</div>
+    <div>Detalii: Scanare OK – Entropie normală, fără steganografie sau criptare neautorizată</div>
+    <div>Agent: MaD-oais StegoAnalyzer v1.0</div>
+  `;
+  historyContent.insertBefore(newCard, historyContent.firstChild);
+}
+</script>
+<style>
+  /* Stiluri modale și utilitare */
+  .corupte-content.open, .lipsa-content.open { max-height: 300px !important; }
+  .arrow.rotated { transform: rotate(180deg); }
+  .tool-tag { background: #2a2a3c; color: #4fc3f7; padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 4px; border: 1px solid #333; }
+  .tools-inventory-bar { margin: 8px 0; font-size: 11px; color: #aaa; }
+  
+  /* Container flexibil pentru cardul modal */
+  .modal-card {
+    background: #1e1e1e;
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #333;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+
+  /* Zona de scroll pentru tabel */
+  .modal-results-scroll {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 10px;
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+  }
+
+  .modal-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .modal-table th, .modal-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #333; }
+  .modal-table th { background: #252538; color: #4fc3f7; position: sticky; top: 0; z-index: 2; }
+  
+  .btn-small-act { padding: 4px 8px; font-size: 10px; border-radius: 3px; cursor: pointer; border: none; font-weight: bold; }
+  .btn-act-fix { background: #0288d1; color: #fff; }
+  .btn-act-fix:disabled { background: #455a64; cursor: not-allowed; }
+  .btn-act-del { background: #ef5350; color: #fff; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+updatePostIngestButtonsState();
+  const btnIntegrity = document.getElementById('btn-integrity');
+  if (btnIntegrity) {
+    btnIntegrity.addEventListener('click', () => showIntegrityModal());
+  }
+
+  const btnTechnical = document.getElementById('btn-technical');
+  if (btnTechnical) {
+    btnTechnical.addEventListener('click', () => showTechnicalModal());
+  }
+});
+
+// Helper generare Overlay Central
+function getOrCreateModalContainer() {
+  let modalContainer = document.getElementById('custom-modal-overlay');
+  if (!modalContainer) {
+    modalContainer = document.createElement('div');
+    modalContainer.id = 'custom-modal-overlay';
+    modalContainer.style.cssText = `
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); display: flex; align-items: center;
+      justify-content: center; z-index: 9999;
+    `;
+    document.body.appendChild(modalContainer);
+  }
+  return modalContainer;
+}
+
+// ────────────────────────────────────────────────
+// 1. MODAL & SIMULARE: EXTENSII & DUPLICATE
+// ────────────────────────────────────────────────
+// ────────────────────────────────────────────────
+// 1. MODAL & SIMULARE: EXTENSII & DUPLICATE
+// ────────────────────────────────────────────────
+function showIntegrityModal() {
+  if (typeof isFolderLoaded !== 'undefined' && !isFolderLoaded) return;
+  const modalContainer = getOrCreateModalContainer();
+  
+  const content = `
+    <div class="modal-card">
+      <h3 style="margin-top:0; color:#4fc3f7;">Verificare Extensii & Duplicate</h3>
+      <div id="integrity-discovery-box" style="margin-bottom:10px; font-size:13px; color:#ccc;">
+        <div>🔍 Analiză rapidă amprente digitale SHA-256 și PRONOM / Siegfried...</div>
+      </div>
+
+      <div class="tools-inventory-bar" style="margin-bottom: 12px; font-size: 12px; color: #aaa;">
+        Ecosistem verificare: 
+        <span class="tool-tag" style="background:#1e3a8a; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:4px;">Siegfried</span>
+        <span class="tool-tag" style="background:#1e3a8a; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:4px;">ExifTool</span>
+        <span class="tool-tag" style="background:#1e3a8a; padding:2px 6px; border-radius:3px; font-size:11px;">SHA256</span>
+      </div>
+
+      <div id="integrity-results-placeholder" class="modal-results-scroll" style="min-height:180px; max-height:280px; overflow-y:auto;">
+        <p style="padding:10px; font-size:12px; color:#888; text-align:center;">Verificarea va identifica fișierele cu extensie necorespunzătoare (mismatches) și duplicatele din pachet.</p>
+      </div>
+
+      <div style="margin-top:15px; display:flex; justify-content:flex-end; gap:10px; flex-shrink: 0;">
+        <button id="integ-close" class="btn-secondary" style="padding:6px 14px; cursor:pointer;">Închide</button>
+        <button id="integ-start" class="btn-primary" style="background:#0288d1; color:#fff; border:none; padding:6px 14px; border-radius:4px; cursor:pointer;">Start scanare</button>
+      </div>
+    </div>
+  `;
+
+  modalContainer.innerHTML = content;
+  modalContainer.style.display = 'flex';
+
+  document.getElementById('integ-close').addEventListener('click', () => modalContainer.style.display = 'none');
+  document.getElementById('integ-start').addEventListener('click', () => runIntegrityAnalysis(modalContainer));
+}
+
+function runIntegrityAnalysis(modalContainer) {
+  const box = modalContainer.querySelector('#integrity-discovery-box');
+  if (box) box.innerHTML = '<div style="color: #4fc3f7;">⏳ Calculare hash-uri SHA-256 și potrivire tipuri MIME în curs...</div>';
+
+  setTimeout(() => {
+    const resultsPlaceholder = modalContainer.querySelector('#integrity-results-placeholder');
+    if (box) box.innerHTML = '<div style="color: #10b981;">✅ Analiză integritate finalizată!</div>';
+
+    resultsPlaceholder.innerHTML = `
+      <table class="modal-table" style="width:100%; border-collapse:collapse; font-size:12px;">
+        <thead>
+          <tr style="border-bottom:1px solid #334155; text-align:left;">
+            <th style="padding:6px;">Nume fișier</th>
+            <th style="padding:6px;">Problemă</th>
+            <th style="padding:6px;">Sursă</th>
+            <th style="padding:6px;">Acțiune</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="row-mismatch-1" style="background: rgba(239,68,68,0.08); transition: background 0.3s ease;">
+            <td class="file-name-cell" title="TM-FD-00135-01.pdf" style="padding:6px; font-weight:bold;">TM-FD-00135-01.pdf</td>
+            <td class="issue-cell" style="color:#ef4444; padding:6px;">⚠️ Mismatch: Mime real image/tiff (detectat .tif)</td>
+            <td style="padding:6px; color:#aaa;">Siegfried</td>
+            <td style="padding:6px;">
+              <button class="btn-small-act btn-act-fix" data-action="fix-ext" data-new-name="TM-FD-00135-01.tif" style="background:#059669; color:#fff; border:none; padding:3px 8px; border-radius:3px; cursor:pointer; font-size:11px;">Corectează .tif</button>
+            </td>
+          </tr>
+          
+          <tr class="duplicate-group-header" style="background: rgba(255, 200, 150, 0.1);">
+            <td colspan="4" style="padding:6px; font-weight:bold; color:#4CAF50; font-size:11px;">
+              Duplicate (2 apariții) – SHA-256: <code>e3b0c44298fc1c149afbf4c8996fb924...</code>
+            </td>
+          </tr>
+          <tr class="duplicate-row" style="background: rgba(255, 200, 150, 0.05); transition: opacity 0.3s ease;">
+            <td style="padding:6px;">IMG_002_copy.jpg</td>
+            <td style="padding:6px; color:#f87171;">🚨 Hash identic / Hash SHA-256 collisions </td>
+            <td style="padding:6px; color:#aaa;">SHA256 match</td>
+            <td style="padding:6px;">
+              <button class="btn-small-act btn-act-del" data-action="delete" style="background:#dc2626; color:#fff; border:none; padding:3px 8px; border-radius:3px; cursor:pointer; font-size:11px;">Șterge duplicat</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+    // Event Delegation actualizat pentru modificarea numelui și stării în timp real
+    resultsPlaceholder.onclick = (e) => {
+      const target = e.target;
+      const row = target.closest('tr');
+
+      if (target.dataset.action === 'fix-ext') {
+        const newName = target.dataset.newName || 'TM-FD-00135-01.tif';
+        
+        // 1. Schimbă numele fișierului în coloană
+        const fileNameCell = row.querySelector('.file-name-cell');
+        if (fileNameCell) {
+          fileNameCell.textContent = newName;
+          fileNameCell.title = newName;
+          fileNameCell.style.color = '#34d399';
+        }
+
+        // 2. Schimbă statusul problemei
+        const issueCell = row.querySelector('.issue-cell');
+        if (issueCell) {
+          issueCell.innerHTML = '<span style="color:#10b981; font-weight:500;">✅ Extensie sincronizată (.tif)</span>';
+        }
+
+        // 3. Schimbă stilul rândului și al butonului
+        row.style.background = 'rgba(16, 185, 129, 0.12)';
+        target.textContent = 'Corectat ✓';
+        target.style.background = '#334155';
+        target.disabled = true;
+        target.style.cursor = 'default';
+
+        if (typeof addEventToHistory === 'function') {
+          addEventToHistory('extension fix', `Corectat extensie fișier în ${newName}`);
+        }
+
+      } else if (target.dataset.action === 'delete') {
+        if (row) {
+          row.style.opacity = '0';
+          setTimeout(() => {
+            const tbody = row.closest('tbody');
+            row.remove();
+
+            // Dacă nu mai sunt alte duplicate, elimină și rândul header de grup
+            if (tbody && !tbody.querySelector('.duplicate-row')) {
+              const headerGroup = tbody.querySelector('.duplicate-group-header');
+              if (headerGroup) headerGroup.remove();
+            }
+          }, 300);
+        }
+
+        if (typeof addEventToHistory === 'function') {
+          addEventToHistory('duplicate remove', 'Șters fișier duplicat identificat prin SHA-256.');
+        }
+      }
+    };
+
+    if (typeof addEventToHistory === 'function') {
+      addEventToHistory('integrity check', 'Găsit 1 extensie greșită și 1 grup de duplicate SHA256.');
+    }
+  }, 1300);
+}
+
+// ────────────────────────────────────────────────
+// 2. MODAL & SIMULARE: ANALIZĂ TEHNICĂ
+// ────────────────────────────────────────────────
+function showTechnicalModal() {
+if (!isFolderLoaded) return;
+  const modalContainer = getOrCreateModalContainer();
+
+  const content = `
+    <div class="modal-card">
+      <h3 style="margin-top:0; color:#4fc3f7;">Analiză Tehnică — Validare Structură & Formate</h3>
+      <div id="tech-discovery-box" style="margin-bottom:10px; font-size:13px; color:#ccc;">
+        <div>🔍 Pregătire inspecție fișiere prin instrumente de specialitate...</div>
+      </div>
+
+      <div class="tools-inventory-bar">
+        Ecosistem analiză: 
+        <span class="tool-tag">Siegfried</span>
+        <span class="tool-tag">QPDF</span>
+        <span class="tool-tag">VeraPDF</span>
+        <span class="tool-tag">ImageMagick</span>
+        <span class="tool-tag">ExifTool</span>
+        <span class="tool-tag">FFmpeg</span>
+      </div>
+
+      <div id="tech-results-placeholder" class="modal-results-scroll">
+        <p style="padding:10px; font-size:12px; color:#888;">Procesul va testa fișierele Media, PDF și TIFF pentru corupții sau erori de parsare structură.</p>
+      </div>
+
+      <div style="margin-top:15px; display:flex; justify-content:flex-end; gap:10px; flex-shrink: 0;">
+        <button id="tech-close" class="btn-secondary" style="padding:6px 14px; cursor:pointer;">Închide</button>
+        <button id="tech-start" class="btn-primary" style="background:#0288d1; color:#fff; border:none; padding:6px 14px; border-radius:4px; cursor:pointer;">Execută analiză</button>
+      </div>
+    </div>
+  `;
+
+  modalContainer.innerHTML = content;
+  modalContainer.style.display = 'flex';
+
+  document.getElementById('tech-close').addEventListener('click', () => modalContainer.style.display = 'none');
+  document.getElementById('tech-start').addEventListener('click', () => runTechnicalAnalysis(modalContainer));
+}
+
+function runTechnicalAnalysis(modalContainer) {
+  const box = modalContainer.querySelector('#tech-discovery-box');
+  if (box) box.innerHTML = '<div style="color: #4fc3f7;">⏳ Rulare inspecții QPDF, ImageMagick și FFprobe...</div>';
+
+  setTimeout(() => {
+    const resultsPlaceholder = modalContainer.querySelector('#tech-results-placeholder');
+    if (box) box.innerHTML = '<div style="color: #ff4d4d; font-weight:bold;">🚨 Scanare finalizată: 1 fișier corupt detectat!</div>';
+
+    resultsPlaceholder.innerHTML = `
+      <table class="modal-table">
+        <thead>
+          <tr>
+            <th>Nume fișier</th>
+            <th>Status / Motiv</th>
+            <th>Sursă Control</th>
+            <th>Acțiune</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>scan_master_001.tif</td>
+            <td style="color:#4caf50; font-weight:bold;">✅ OK [m:ImageMagick Valid]</td>
+            <td>ImageMagick</td>
+            <td><span style="color:#888; font-size:11px;">Nicio acțiune</span></td>
+          </tr>
+          <tr>
+            <td>raport_2026.pdf</td>
+            <td style="color:#ff4d4d; font-weight:bold;">❌ Error: Stream xref damaged</td>
+            <td>QPDF CLI</td>
+            <td><button class="btn-small-act btn-act-del" data-action="delete-corrupt">Șterge & Generează Martor</button></td>
+          </tr>
+          <tr>
+            <td>audio_interviu.wav</td>
+            <td style="color:#4caf50; font-weight:bold;">🎬 VALID [PCM 16-bit 44.1kHz]</td>
+            <td>FFprobe</td>
+            <td><span style="color:#888; font-size:11px;">Nicio acțiune</span></td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+    // Delegation pentru acțiuni pe tabel
+    resultsPlaceholder.onclick = (e) => {
+      const target = e.target;
+      if (target.dataset.action === 'delete-corrupt') {
+        const row = target.closest('tr');
+        const fileName = row ? row.cells[0].textContent : 'Fișier PDF';
+        if (row) row.remove();
+        addEventToHistory('corrupt file remove', `Eliminat ${fileName} și generat martor PREMIS.`);
+      }
+    };
+
+    addEventToHistory('technical analysis', 'Verificare finalizată: 1 fișier PDF corupt identificat prin QPDF.');
+  }, 1500);
+}
+
+// ────────────────────────────────────────────────
+// HELPER UNIVERSAL ISTORIC
+// ────────────────────────────────────────────────
+function addEventToHistory(eventType, details) {
+  const historyContent = document.getElementById('history-content');
+  if (!historyContent) return;
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('ro-RO');
+
+  const newCard = document.createElement('div');
+  newCard.className = 'event-card';
+  newCard.innerHTML = `
+    <div class="event-time">${dateStr} la ${timeStr}</div>
+    <div class="event-title">Tip eveniment: ${eventType}</div>
+    <div>Detalii: ${details}</div>
+    <div>Agent: MaD-oais Inspection Module v1.0</div>
+  `;
+  historyContent.insertBefore(newCard, historyContent.firstChild);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  Digital Preservation Simulator — OAIS Model
+  ============================================================
+  Author  : Pura Dan Silviu
+  Web     : arhivelenationale.ro
+  Profile : Digital Archivist & Records Management Consultant
+  Standards: ISO 14721:2025 (OAIS) · ISO 16363 · PREMIS 3.0
+             ISO 19005 (PDF/A) · ISO 14533 · ISO 18492
+  Version : EN — International edition
+  ============================================================
+-->
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaD-Suite</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a1424;
+    color: #d4d4ff;
+    font-family: 'consolas', monospace;
+    font-size: 1.15rem;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+  #matrix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.10;
+    pointer-events: none;
+  }
+  .content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+ 
+  main {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  .prompt { color: grey; user-select: none; }
+/* ── Cards Flex ── */
+.cards-flex {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 240px));
+  gap: 10px;
+  justify-content: center;
+
+}
+.card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.card {
+
+  max-width: 260px;
+  background: #132338;
+  border: 1px solid #1e3a5f;
+  border-radius: 10px;
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.card:hover {
+  background: #1a2f4a;
+  border-color: #7eb8ff;
+  box-shadow: 0 0 14px rgba(126, 184, 255, 0.35),
+              0 0 28px rgba(126, 184, 255, 0.15);
+  transform: translateY(-3px);
+}
+.card-icon {
+  width: 33px;
+  height: 33px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d4e4ff;
+  letter-spacing: 0.3px;
+}
+
+.card-sub {
+  font-size: 0.77rem;
+  color: #8892a4;
+  line-height: 1.3;
+}
+
+.card-actions {
+  display: flex;
+  gap: 3px;
+}
+
+.card-actions button {
+  flex: 1;
+  background: #132338;
+  border: 1px solid #1e3a5f;
+  color: #8892a4;
+  font-family: inherit;
+  font-size: 0.72rem;
+  padding: 5px 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+
+.btn-install:hover {
+  border-color: #7fffb2;
+  color: #7fffb2;
+}
+
+.btn-uninstall:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+
+  #description-line {
+    margin-top: 20px;
+
+padding: 12px 18px;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+    font-size: 0.7rem;
+	border: 1px solid transparent;          /* invizibil când e doar cursorul */
+  border-radius: 6px;
+  background: transparent;
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+  line-height: 1.55;
+  }
+ #description-line.has-content {
+  border-color: #7eb8ff;
+  background: rgba(19, 35, 56, 0.85);
+}
+  footer {
+    background: transparent;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 1rem;
+    color: grey;
+  }
+  .icon-img {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.95;
+  }
+  .mad-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .prompt img {
+    width: 68px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+/* ── Tooltip modern ── */
+.card {
+  position: relative;
+}
+
+/* Tooltip */
+.card[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 12px);          /* mai jos puțin */
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: #0d1a2e;
+  color: #d4e4ff;
+  font-size: 0.72rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #7eb8ff;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+}
+
+.card[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Săgeată */
+.card[data-tooltip]::before {
+  content: "";
+  position: absolute;
+  top: calc(100% );           /* ← ridicată față de 2px */
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: #7eb8ff;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 9999;
+}
+
+.card[data-tooltip]:hover::before {
+  opacity: 1;
+}
+/* ─── HEADER ─── */
+header {
+  text-align: center;
+  padding: 18px ;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: -9px;
+  position: relative;
+}
+header::after {
+  content: '';
+  position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 260px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.header-badge {
+  display: inline-block;
+  background: var(--accent-light);
+  border: 1px solid rgba(74,222,128,0.35);
+  color: #4ade80;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 3px;
+  padding: 5px 16px; border-radius: 2px;
+  margin-bottom: 18px; text-transform: uppercase; font-weight: 700;
+}
+header h1 {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-weight: 700; letter-spacing: -0.5px; line-height: 1.08;
+  margin-bottom: 12px; color: var(--text);
+}
+header h1 em { font-style: normal; color: var(--accent); font-weight: 700; }
+header h1 span {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace; font-weight: 400;
+  font-style: normal; font-size: 0.42em;
+  letter-spacing: 5px; text-transform: uppercase;
+  color: var(--text-dim); margin-top: 10px;
+}
+header p {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem; color: var(--text-mid);
+  letter-spacing: 1.2px; margin-bottom: 18px;
+}
+.header-author {
+  display: inline-flex; align-items: center; gap: 10px;
+  border-top: 1px solid var(--border); padding-top: 16px;
+  width: 100%; justify-content: center; margin-top: 4px;
+}
+.author-line { width: 32px; height: 1px; background: var(--border2); }
+.author-name { font-family: 'IBM Plex Sans', sans-serif; font-style: italic; font-weight: 400; font-size: 0.85rem; color: var(--text-mid); }
+.author-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.54rem;
+  color: var(--accent); letter-spacing: 2px; text-transform: uppercase;
+  background: var(--accent-light); border: 1px solid rgba(74,222,128,0.3);
+  padding: 2px 8px; border-radius: 2px;
+}
+
+</style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <div class="content">
+    <header>
+
+<div style="display:flex; align-items:center; gap:14px; justify-content:center; margin-bottom:20px;">
+  <img src="logo/logo5.png" class="icon-img" alt="MaD-OAIS Logo">
+  <div style="text-align:left;">
+    <span class="logo mad-title">
+      MaD Suite · <span style="color:#4672f2;">MANAGEMENTUL ARHIVELOR DIGITALE</span>
+    </span>
+  </div>
+</div>
+ <div class="header-badge"> OAIS ISO 14721:2025 · ISO 16363 · PREMIS 3.0 · ISO 19005 (PDF/A) · ISO 23081 ERMS · OCFL:1.1.1:2024-11-07</div>
+    </header>
+    <main>
+
+      <div class="terminal-line"></div>
+ <div class="cards-flex">
+
+  <!-- SIP -->
+  <div class="card-wrapper">
+    <div class="card"
+	data-tooltip="Lansează pagina de simulare MaD-SIP-Generator"
+         onmouseover="showDescription('sip')"
+         onmouseout="hideDescription()"
+         onclick="startApp('test_imagini/index_sip.html')">
+      <div class="card-icon">
+        <img class="icon-img" src="logo/logo1.png" alt="SIP Logo">
+      </div>
+      <div class="card-title">MaD-SIP-Generator</div>
+      <div class="card-sub"> Generare pachete SIP</div>
+    </div>
+  </div>
+
+  <!-- OAIS -->
+  <div class="card-wrapper">
+    <div class="card"
+	data-tooltip="Lansează pagina de simulare MaD-OAIS"
+         onmouseover="showDescription('ingestor')"
+         onmouseout="hideDescription()"
+         onclick="startApp('oais.html')">
+      <div class="card-icon">
+        <img class="icon-img" src="logo/logo2.png" alt="OAIS Logo">
+      </div>
+      <div class="card-title">MaD-OAIS</div>
+      <div class="card-sub">Ingestie & validare</div>
+    </div>
+  </div>
+
+  <!-- Derivator -->
+  <div class="card-wrapper">
+    <div class="card"
+	data-tooltip="Lansează pagina de simulare MaD-Derivator"
+         onmouseover="showDescription('derivator')"
+         onmouseout="hideDescription()"
+         onclick="startApp('derivate.html')">
+      <div class="card-icon">
+        <img class="icon-img" src="logo/logo4.png" alt="Derivator Logo">
+      </div>
+      <div class="card-title">MaD-Derivator</div>
+      <div class="card-sub">Formate de acces</div>
+    </div>
+  </div>
+
+  <!-- Repository-Manager -->
+  <div class="card-wrapper">
+    <div class="card"
+	data-tooltip="Lansează pagina de simulare MaD-Repository-Manager"
+         onmouseover="showDescription('ocfl')"
+         onmouseout="hideDescription()"
+         onclick="startApp('ocfl.html')">
+      <div class="card-icon">
+        <img class="icon-img" src="logo/logo3.png" alt="Repository Logo">
+      </div>
+      <div class="card-title">MaD-Repository-Manager</div>
+      <div class="card-sub">Conservare OCFL</div>
+    </div>
+  </div>
+
+</div>
+
+      <!-- Linia cu descriere dinamică + cursor -->
+		<div class="terminal-line" id="description-line">
+
+			<span id="desc-text" class="blink" style="color: #8892a4;">▰</span>
+		</div>
+      <!-- Status lansare -->
+      <div id="status-line"></div>
+    </main>
+    <footer>
+	  <div class="header-author">
+    <div class="author-line"></div>
+    <span class="author-name"> </span>
+    <span class="author-tag">2026 · BFP ⚡ PDS · mad-suite</span>
+    <div class="author-line"></div>
+  </div>
+	</footer>
+  </div>
+
+  <script>
+    // ── Matrix Rain ────────────────────────────────────────────────
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    const chars = "01010101010101010101010101010101 PURA-DAN-BOGDAN-POPOVICI";
+    const fontSize = 16;
+    let columns = canvas.width / fontSize;
+    let drops = [];
+    for (let i = 0; i < columns; i++) {
+      drops[i] = Math.random() * canvas.height / fontSize;
+    }
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'lightblue';
+      ctx.font = `${fontSize}px VT323`;
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 77);
+
+    // ── Descrieri ──────────────────────────────────────────────────
+const descriptions = {
+  sip: "Aplicație desktop Electron pentru generarea pachetelor de transmitere SIP (Submission Information Package) pentru arhive digitale, conceput pentru a crea pachete standardizate, verificate criptografic, destinate conservării patrimoniului digital.<br><br>" +
+      "• <strong>Scanare automată a fișierelor</strong> – indexare recursivă cu hashing SHA-256 în paralel<br>" +
+      "• <strong>Identificare de format</strong> – integrare cu Siegfried (baza de date PRONOM)<br>" +
+      "• <strong>Detectare duplicate</strong> – identifică fișiere identice după hash<br>" +
+      "• <strong>Corectare extensii</strong> – detectează și repară extensii greșite<br>" +
+      "• <strong>Integritate criptografică</strong> – sistem dual de hash (anchor hash + hash ZIP final)<br>" +
+      "• <strong>Generare manifest</strong> – MI-SIP (intern) și ME-SIP (extern)<br>" +
+      "• <strong>Păstrarea structurii directoarelor</strong> în metadate",
+
+  ingestor: "Aplicație desktop Electron destinată managementului arhivei digitale, construită pe modelul de referință <strong>ISO 14721 (OAIS)</strong> și orientată către fluxurile de ingestie și prezervare digitală.<br><br>" +
+
+        "<strong>FLUX DE INGESTIE ȘI PREZERVARE</strong><br>" +
+        "• <strong>Procesare SIP</strong> – ingestia pachetelor de transmitere și verificarea structurii acestora.<br>" +
+        "• <strong>Procesare arhive ZIP</strong> – deschiderea, extragerea și procesarea automată a conținutului.<br>" +
+        "• <strong>Validare manifest</strong> – verificarea manifestelor interne și externe și a integrității conținutului.<br>" +
+        "• <strong>Analiză tehnică</strong> – identificarea formatelor și extragerea metadatelor tehnice necesare prezervării.<br>" +
+        "• <strong>Generare derivate</strong> – producerea formatelor derivate necesare accesului și utilizării conținutului digital.<br>" +
+        "• <strong>Metadate de prezervare</strong> – managementul informațiilor tehnice și al evenimentelor asociate obiectelor digitale.<br>" +
+		        "• <strong>Identificare PRONOM</strong> – înregistrarea formatului identificat și a identificatorului PUID.<br>" +
+		 "• <strong>Jurnal PREMIS</strong> – istoricul complet al evenimentelor generate în timpul ingestiei.<br>" +
+        "• <strong>Transfer către OCFL</strong> – transferul obiectelor procesate și validate în depozitul de conservare digitală.<br><br>",
+
+  ocfl: "Aplicație desktop Electron pentru conservare digitală pe termen lung, conformă cu <strong>OCFL 1.1.1:2024 (Oxford Common File Layout)</strong>.<br><br>" +
+        "<strong>LAYOUT DE STOCARE</strong><br>" +
+        "• <strong>Distribuție pe disc bazată pe SHA-256</strong> – fiecare obiect este plasat pe disc pe baza SHA-256 al ID-ului logic, utilizând extensia OCFL <strong>0004-hashed-n-tuple-storage-layout</strong>.<br>" +
+        "• <strong>Foldere imbricate opace</strong> – 3 segmente a câte 3 caractere, urmate de folderul final care conține hash-ul complet, asigurând distribuția uniformă a zeci de mii de obiecte.<br>" +
+        "• <strong>inventory.json</strong> – câmpul <strong>id</strong> rămâne sursa de adevăr pentru identitatea obiectului.<br><br>" +
+        "<strong>VERSIONARE ȘI INTEGRITATE</strong><br>" +
+        "• <strong>Deduplicare automată pe SHA-512</strong> – conținutul identic reîncărcat nu ocupă spațiu suplimentar.<br>" +
+        "• <strong>Fixity multi-algoritm</strong> – fiecare fișier nou primește checksum-uri SHA-512, SHA-256, SHA-1, MD5 și BLAKE2b-512, calculate simultan într-o singură citire a fișierului sursă.<br>" +
+        "• <strong>Stergere logică</strong> – elimină fișierul din versiunea curentă, păstrându-l recuperabil în istoricul obiectului.<br>" +
+        "• <strong>Purjare conformă OCFL</strong> – eliminare definitivă a obiectului întreg sau a unui fișier individual din întregul istoric, cu tombstone și jurnal de audit.<br>" +
+        "• <strong>Diff vizual între versiuni</strong> – identifică elementele adăugate, eliminate, modificate și redenumite.",
+
+derivator: "Modul integrat în MaD-oais, pentru normalizarea masterelor și generarea automată a formatelor derivate necesare accesului și utilizării conținutului digital.<br><br>" +
+
+           "<strong>NORMALIZARE TIFF MASTER</strong><br>" +
+           "• <strong>Normalizare lossless</strong> – generare TIFF Master cu compresie LZW sau ZIP, la rezoluția DPI configurată.<br>" +
+           "• <strong>Procesare imagine</strong> – control asupra spațiului de culoare, adâncimii de culoare, layere-lor și metadatelor.<br>" +
+           "• <strong>Transformări</strong> – rotire și crop manual al marginilor, cu posibilitatea configurării numerotării fișierelor.<br><br>" +
+
+           "<strong>GENERARE DERIVATE INDIVIDUALE - IMAGINI</strong><br>" +
+           "• <strong>Conversie multi-format</strong> – generare JPG, JPEG 2000 (JP2), PDF și PDF/A-2B din TIFF, JPEG, PNG, BMP sau PDF.<br>" +
+           "• <strong>Parametri configurabili</strong> – DPI, calitate și compresie, contrast, sharpen și adâncime de culoare.<br>" +
+           "• <strong>Procesare în lot</strong> – aplicarea regulilor de conversie asupra unor selecții de fișiere sau directoare întregi.<br><br>" +
+
+           "<strong>PDF PAGINI MULTIPLE</strong><br>" +
+           "• <strong>Generare PDF</strong> – combinarea imaginilor în documente PDF standard sau PDF/A-2B pentru arhivare.<br>" +
+           "• <strong>Preseturi rapide</strong> – configurații optimizate pentru Web/Acces, Arhivă și Print.<br>" +
+           "• <strong>Control dimensional</strong> – formate A4, A3, A5, Letter, Legal sau dimensiuni personalizate, cu păstrarea proporțiilor.<br>" +
+           "• <strong>Optimizare</strong> – calcul estimativ al dimensiunii PDF, control DPI, downsampling, calitate JPEG și sharpening.<br>" +
+           "• <strong>Split PDF</strong> – fragmentarea documentelor după numărul de pagini sau după dimensiunea estimată în MB."
+};
+function showDescription(type) {
+  const line = document.getElementById('description-line');
+  const text = document.getElementById('desc-text');
+  text.innerHTML = descriptions[type];
+  text.classList.remove('blink');
+  line.classList.add('has-content');
+}
+
+function hideDescription() {
+  const line = document.getElementById('description-line');
+  const text = document.getElementById('desc-text');
+  text.innerHTML = '▰';
+  text.classList.add('blink');
+  line.classList.remove('has-content');
+}
+    // ── Lansare HTML (același folder) ──────────────────────────────
+    let statusTimer = null;
+    function setStatus(msg, color = '#7fffb2') {
+      const el = document.getElementById('status-line');
+      el.style.color = color;
+      el.textContent = msg;
+      clearTimeout(statusTimer);
+      statusTimer = setTimeout(() => { el.textContent = ''; }, 2500);
+    }
+
+    function startApp(htmlFile) {
+      setStatus(`▸ Se deschide ${htmlFile}…`, '#d4d4ff');
+      // Navigare în aceeași fereastră (sau schimbă cu window.open(htmlFile) dacă vrei tab nou)
+      window.location.href = htmlFile;
+    }
+
+
+// Placeholdere – aici vei pune căile reale ulterior
+function installModule(id) {
+  const paths = {
+    sip: null,       // ex: "installers/MaD-SIP-Setup.exe"
+    oais: null,
+    derivator: null,
+    ocfl: null
+  };
+
+  setStatus(`▸ Instalare ${id.toUpperCase()} – placeholder (calea nu este încă setată)`, '#ffaa44');
+  console.log(`[INSTALL] Modul: ${id} | Cale: ${paths[id] || 'nesetată'}`);
+}
+
+function uninstallModule(id) {
+  const paths = {
+    sip: null,
+    oais: null,
+    derivator: null,
+    ocfl: null
+  };
+
+  setStatus(`▸ Dezinstalare ${id.toUpperCase()} – placeholder (calea nu este încă setată)`, '#ffaa44');
+  console.log(`[UNINSTALL] Modul: ${id} | Cale: ${paths[id] || 'nesetată'}`);
+}
+  </script>
+</body>
+</html>

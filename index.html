@@ -249,9 +249,27 @@ header::after {
   border: 1px solid rgba(74,222,128,0.35);
   color: #4ade80;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.6rem; letter-spacing: 3px;
-  padding: 5px 16px; border-radius: 2px;
-  margin-bottom: 18px; text-transform: uppercase; font-weight: 700;
+  font-size: 0.6rem; 
+  letter-spacing: 3px;
+  padding: 5px 16px; 
+  border-radius: 2px;
+  margin-bottom: 18px; 
+  text-transform: uppercase; 
+  font-weight: 700;
+  cursor: default; /* Cursor standard pentru fundal/container */
+}
+
+/* Stil pentru elementele cu tooltip din interior */
+.header-badge span[title] {
+  cursor: help; /* Afișează cursorul cu semnul întrebării */
+  border-bottom: 1px dotted rgba(74, 222, 128, 0.5); /* Linie punctată discretă sub text */
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Indicator vizual la trecerea cursorului */
+.header-badge span[title]:hover {
+  color: #86efac; /* Deschide puțin culoarea la hover */
+  border-bottom-color: #86efac;
 }
 header h1 {
   font-family: 'IBM Plex Sans', sans-serif;
@@ -311,7 +329,14 @@ header p {
     </span>
   </div>
 </div>
- <div class="header-badge"> OAIS (ISO 14721:2025) · ISO 16363:2012 · PREMIS v3.0 · ISO 19005 (PDF/A) · ISO 23081 · OCFL v1.1.1 (2024-11-07)</div>
+<div class="header-badge">
+  <span title="Open Archival Information System – Model de referință pentru sisteme de arhivare digitală">OAIS (ISO 14721:2025)</span> · 
+  <span title="Audit și certificare pentru repozitorii digitale de încredere">ISO 16363:2012</span> · 
+  <span title="Dicționar de date și metadate pentru conservare și proveniență digitală">PREMIS v3.0</span> · 
+  <span title="Standard pentru arhivarea pe termen lung a documentelor electronice în format PDF">ISO 19005 (PDF/A)</span> · 
+  <span title="Metadate pentru gestionarea documentelor de arhivă (Records Management)">ISO 23081</span> · 
+  <span title="Oxford Common File Layout – Structură fizică de fișiere independentă de aplicație">OCFL v1.1.1 (2024-11-07)</span>
+</div>
  <div class="tools-badge">
   Ecosistem Software: Siegfried (PRONOM) · veraPDF · ExifTool · ImageMagick · QPDF · Ghostscript · FFmpeg/Probe
 </div>

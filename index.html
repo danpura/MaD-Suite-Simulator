@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <!--
-  ===========================================
-  MaD-OAIS Simulator — OAIS Compliant
-  ===========================================
-  Author  : Pura Dan Silviu
-  Web     : arhivelenationale.ro
-  Profile : Digital Archivist
-  ===========================================
+  =============================
+  MaD-OAIS Simulator — 2026
+  =============================
+  Dan Pura | Digital Archivist
+  =============================
 -->
 <html lang="ro">
 <head>
@@ -47,7 +45,6 @@
     overflow-y: auto;
   }
   .prompt { color: grey; user-select: none; }
-/* ── Cards Flex ── */
 .cards-flex {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 240px));
@@ -141,7 +138,7 @@ padding: 12px 18px;
   margin-left: auto;
   margin-right: auto;
     font-size: 0.7rem;
-	border: 1px solid transparent;          /* invizibil când e doar cursorul */
+	border: 1px solid transparent; 
   border-radius: 6px;
   background: transparent;
   transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
@@ -178,7 +175,6 @@ padding: 12px 18px;
     object-fit: contain;
     vertical-align: middle;
 }
-/* ── Tooltip modern ── */
 .card {
   position: relative;
 }
@@ -187,7 +183,7 @@ padding: 12px 18px;
 .card[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
-  top: calc(100% + 12px);          /* mai jos puțin */
+  top: calc(100% + 12px);   
   left: 50%;
   transform: translateX(-50%) translateY(6px);
   background: #0d1a2e;
@@ -209,11 +205,10 @@ padding: 12px 18px;
   transform: translateX(-50%) translateY(0);
 }
 
-/* Săgeată */
 .card[data-tooltip]::before {
   content: "";
   position: absolute;
-  top: calc(100% );           /* ← ridicată față de 2px */
+  top: calc(100% );    
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
@@ -226,7 +221,7 @@ padding: 12px 18px;
 .card[data-tooltip]:hover::before {
   opacity: 1;
 }
-/* ─── HEADER ─── */
+
 header {
   text-align: center;
   padding: 18px ;
@@ -253,19 +248,17 @@ header::after {
   margin-bottom: 18px; 
   text-transform: uppercase; 
   font-weight: 700;
-  cursor: default; /* Cursor standard pentru fundal/container */
+  cursor: default;
 }
 
-/* Stil pentru elementele cu tooltip din interior */
 .header-badge span[title] {
-  cursor: help; /* Afișează cursorul cu semnul întrebării */
-  border-bottom: 1px dotted rgba(74, 222, 128, 0.5); /* Linie punctată discretă sub text */
+  cursor: help; 
+  border-bottom: 1px dotted rgba(74, 222, 128, 0.5);
   transition: border-color 0.2s ease, color 0.2s ease;
 }
 
-/* Indicator vizual la trecerea cursorului */
 .header-badge span[title]:hover {
-  color: #86efac; /* Deschide puțin culoarea la hover */
+  color: #86efac; 
   border-bottom-color: #86efac;
 }
 header h1 {
@@ -302,12 +295,12 @@ header p {
 }
 
 .standards-badge {
-  color: #7eb8ff; /* Albastru accent pentru ISO / Standarde */
+  color: #7eb8ff;
   font-weight: 600;
 }
 
 .tools-badge {
-  color: #8892a4; /* Gri/Muted pentru utilitare software */
+  color: #8892a4;
   font-size: 11px;
   margin-top: 2px;
 }
@@ -343,7 +336,6 @@ header p {
       <div class="terminal-line"></div>
  <div class="cards-flex">
 
-  <!-- SIP -->
   <div class="card-wrapper">
     <div class="card"
 	data-tooltip="Lansează pagina de simulare MaD-SIP-Generator"
@@ -373,7 +365,6 @@ header p {
     </div>
   </div>
 
-  <!-- Derivator -->
   <div class="card-wrapper">
     <div class="card"
 	data-tooltip="Lansează pagina de simulare MaD-Derivator"
@@ -388,7 +379,6 @@ header p {
     </div>
   </div>
 
-  <!-- Repository-Manager -->
   <div class="card-wrapper">
     <div class="card"
 	data-tooltip="Lansează pagina de simulare MaD-Repository-Manager"
@@ -405,7 +395,6 @@ header p {
 
 </div>
 
-      <!-- Linia cu descriere dinamică + cursor -->
 		<div class="terminal-line" id="description-line">
 
 			<span id="desc-text" class="blink" style="color: #8892a4;">▰</span>
@@ -424,7 +413,6 @@ header p {
   </div>
 
   <script>
-    // ── Matrix Rain ────────────────────────────────────────────────
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() {
@@ -433,7 +421,7 @@ header p {
     }
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-    const chars = "01010101010101010101010101010101 PURA-DAN-BOGDAN-POPOVICI";
+    const chars = "01010101010101010101010101010101 DAN - PURA | BOGDAN-POPOVICI";
     const fontSize = 16;
     let columns = canvas.width / fontSize;
     let drops = [];
@@ -454,7 +442,6 @@ header p {
     }
     setInterval(drawMatrix, 77);
 
-    // ── Descrieri ──────────────────────────────────────────────────
 const descriptions = {
   sip: "Aplicație desktop Electron pentru generarea pachetelor de transmitere SIP (Submission Information Package) pentru arhive digitale, conceput pentru a crea pachete standardizate, verificate criptografic, destinate conservării patrimoniului digital.<br><br>" +
       "• <strong>Scanare automată a fișierelor</strong> – indexare recursivă cu hashing SHA-256 în paralel<br>" +
@@ -524,7 +511,7 @@ function hideDescription() {
   text.classList.add('blink');
   line.classList.remove('has-content');
 }
-    // ── Lansare HTML (același folder) ──────────────────────────────
+
     let statusTimer = null;
     function setStatus(msg, color = '#7fffb2') {
       const el = document.getElementById('status-line');
@@ -536,15 +523,12 @@ function hideDescription() {
 
     function startApp(htmlFile) {
       setStatus(`▸ Se deschide ${htmlFile}…`, '#d4d4ff');
-      // Navigare în aceeași fereastră (sau schimbă cu window.open(htmlFile) dacă vrei tab nou)
       window.location.href = htmlFile;
     }
 
-
-// Placeholdere – aici vei pune căile reale ulterior
 function installModule(id) {
   const paths = {
-    sip: null,       // ex: "installers/MaD-SIP-Setup.exe"
+    sip: null,   
     oais: null,
     derivator: null,
     ocfl: null

@@ -621,6 +621,7 @@
       font-weight: 600;
       cursor: pointer;
     }
+	
     .stego-btn-extract:hover { background: #3b82f6; }
     .stego-btn-delete {
       background: #dc2626;
@@ -1228,7 +1229,7 @@
               <button class="audit-reports-btn" id="audit-open-reports">📁 Deschide Folder Rapoarte</button>
             </div>
 
-            <div class="audit-console" id="audit-console-log"></div>
+
           </div>
         </div>
 
@@ -1309,7 +1310,7 @@
             <div class="audit-reports-btn-wrap">
               <button class="audit-reports-btn" id="stego-open-reports">📁 Deschide Folder Rapoarte</button>
             </div>
-            <div class="audit-console" id="stego-console-log"></div>
+  
           </div>
         </div>
       </div>
@@ -2054,7 +2055,7 @@ document.querySelectorAll('.transfer-tab').forEach(tab => {
     const extractBtn = e.target.closest('.stego-btn-extract');
     const deleteBtn = e.target.closest('.stego-btn-delete');
     if (extractBtn) {
-      window.open('BFP-arhive electronice.pdf', '_blank');
+      window.open('stegano.png', '_blank');
       const size = extractBtn.getAttribute('data-size') || '.7z';
       const cell = extractBtn.closest('.stego-actions');
       if (cell) {

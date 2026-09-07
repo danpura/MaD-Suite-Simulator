@@ -2055,7 +2055,7 @@ document.querySelectorAll('.transfer-tab').forEach(tab => {
     const extractBtn = e.target.closest('.stego-btn-extract');
     const deleteBtn = e.target.closest('.stego-btn-delete');
     if (extractBtn) {
-      window.open('stegano.png', '_blank');
+      window.open('logo/stegano.png', '_blank');
       const size = extractBtn.getAttribute('data-size') || '.7z';
       const cell = extractBtn.closest('.stego-actions');
       if (cell) {

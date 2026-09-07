@@ -308,7 +308,7 @@
 <header>
     <h1>MaD Repository Manager (Simulare)</h1>
     <div class="header-controls">
-        <a href="oais.html" class="back-btn" title="Înapoi">← Înapoi</a>
+        <a href="index.html" class="back-btn" title="Înapoi">← Înapoi</a>
         <button class="header-action-btn" id="importFolderBtn" type="button">+ Import folder</button>
         <button class="header-action-btn" id="reindexBtn" type="button">Reindex</button>
         <button class="reload-btn" id="reloadBtn" type="button">⟳ Refresh</button>
@@ -427,10 +427,10 @@
         <div class="preview-box" id="previewBox">
             <strong id="previewCount">Would result in 4 object(s).</strong>
             <ul id="previewList">
-                <li>CJ/CJ-FD-00001-A-1-001 — 3 file(s)</li>
-                <li>CJ/CJ-FD-00001-A-1-002 — 4 file(s)</li>
-                <li>CJ/CJ-FD-00001-A-2-01-025 — 4 file(s)</li>
-                <li>CJ/CJ-FD-00001-A-2-01-026 — 4 file(s)</li>
+                <li>BV/BV-FD-00001-A-1-001 — 3 file(s)</li>
+                <li>BV/BV-FD-00001-A-1-002 — 4 file(s)</li>
+                <li>BV/BV-FD-00001-A-2-01-025 — 4 file(s)</li>
+                <li>BV/BV-FD-00001-A-2-01-026 — 4 file(s)</li>
             </ul>
             <div class="sidecar-note" id="sidecarNote">+ 1 shared provenance file, attached automatically to every resulting object.</div>
         </div>
@@ -480,7 +480,7 @@
 const COUNTIES = [
     { code: 'AB', name: 'Alba' }, { code: 'AR', name: 'Arad' }, { code: 'AG', name: 'Argeș' },
     { code: 'BC', name: 'Bacău' }, { code: 'BH', name: 'Bihor' }, { code: 'BN', name: 'Bistrița-Năsăud' },
-    { code: 'BT', name: 'Botoșani' }, { code: 'BV', name: 'Brașov' }, { code: 'BR', name: 'Brăila' },
+    { code: 'BT', name: 'Botoșani' }, { code: 'BV', name: 'Brașov' }, { code: 'BR', name: 'Brăila' }, { code: 'BU', name: 'București' },
     { code: 'BZ', name: 'Buzău' }, { code: 'CS', name: 'Caraș-Severin' }, { code: 'CL', name: 'Călărași' },
     { code: 'CJ', name: 'Cluj' }, { code: 'CT', name: 'Constanța' }, { code: 'CV', name: 'Covasna' },
     { code: 'DB', name: 'Dâmbovița' }, { code: 'DJ', name: 'Dolj' }, { code: 'GL', name: 'Galați' },
@@ -491,60 +491,60 @@ const COUNTIES = [
     { code: 'PH', name: 'Prahova' }, { code: 'SM', name: 'Satu Mare' }, { code: 'SJ', name: 'Sălaj' },
     { code: 'SB', name: 'Sibiu' }, { code: 'SV', name: 'Suceava' }, { code: 'TR', name: 'Teleorman' },
     { code: 'TM', name: 'Timiș' }, { code: 'TL', name: 'Tulcea' }, { code: 'VS', name: 'Vaslui' },
-    { code: 'VL', name: 'Vâlcea' }, { code: 'VN', name: 'Vrancea' }, { code: 'B', name: 'București' }
+    { code: 'VL', name: 'Vâlcea' }, { code: 'VN', name: 'Vrancea' }
 ];
 
-// Obiecte CJ (după import) — structură ca în imagini
-const CJ_OBJECTS = {
+// Obiecte BV (după import) — structură ca în imagini
+const BV_OBJECTS = {
     '001': {
-        id: 'CJ/CJ-FD-00001-A-1-001',
-        title: 'CJ/CJ-FD-00001-A-1-001',
-        message: 'Import din MaD-oais — pachet CJ-FD-00001-2026.08.29',
+        id: 'BV/BV-FD-00001-A-1-001',
+        title: 'BV/BV-FD-00001-A-1-001',
+        message: 'Import din MaD-oais — pachet BV-FD-00001-2026.08.29',
         date: '8/30/2026, 10:33:12 PM',
         files: [
-            { name: 'CJ-FD-00001-A-1-001_0001.jpg', path: 'v0001/content/CJ-FD-00001-A-1-001_0001.jpg', hash: '6787a13aca501001196eee28...' },
-            { name: 'CJ-FD-00001-A-1-001_0002.jpg', path: 'v0001/content/CJ-FD-00001-A-1-001_0002.jpg', hash: 'd98d39b403af563466712ba...' },
-            { name: 'CJ-FD-00001-A-1-001_0003.jpg', path: 'v0001/content/CJ-FD-00001-A-1-001_0003.jpg', hash: '48055bfd8eea7d3f5eebe397...' },
-            { name: 'PROVENANCE_CJ-FD-00001-2026.08.29.json', path: 'v0001/content/PROVENANCE_CJ-FD-00001-2026.08.29.json', hash: '116805b3eb1441dbbcc8de55...' }
+            { name: 'BV-FD-00001-A-1-001_0001.jpg', path: 'v0001/content/BV-FD-00001-A-1-001_0001.jpg', hash: '6787a13aca501001196eee28...' },
+            { name: 'BV-FD-00001-A-1-001_0002.jpg', path: 'v0001/content/BV-FD-00001-A-1-001_0002.jpg', hash: 'd98d39b403af563466712ba...' },
+            { name: 'BV-FD-00001-A-1-001_0003.jpg', path: 'v0001/content/BV-FD-00001-A-1-001_0003.jpg', hash: '48055bfd8eea7d3f5eebe397...' },
+            { name: 'PROVENANCE_BV-FD-00001-2026.08.29.json', path: 'v0001/content/PROVENANCE_BV-FD-00001-2026.08.29.json', hash: '116805b3eb1441dbbcc8de55...' }
         ]
     },
     '002': {
-        id: 'CJ/CJ-FD-00001-A-1-002',
-        title: 'CJ/CJ-FD-00001-A-1-002',
-        message: 'Import din MaD-oais — pachet CJ-FD-00001-2026.08.29',
+        id: 'BV/BV-FD-00001-A-1-002',
+        title: 'BV/BV-FD-00001-A-1-002',
+        message: 'Import din MaD-oais — pachet BV-FD-00001-2026.08.29',
         date: '8/30/2026, 10:33:13 PM',
         files: [
-            { name: 'CJ-FD-00001-A-1-002_0001.jpg', path: 'v0001/content/CJ-FD-00001-A-1-002_0001.jpg', hash: 'dc5e06cdc8c58d7de56610c6...' },
-            { name: 'CJ-FD-00001-A-1-002_0002.jpg', path: 'v0001/content/CJ-FD-00001-A-1-002_0002.jpg', hash: '7ac8a2e168c1cd8aa0389779...' },
-            { name: 'CJ-FD-00001-A-1-002_0003.jpg', path: 'v0001/content/CJ-FD-00001-A-1-002_0003.jpg', hash: 'c225396de38264715aef9403...' },
-            { name: 'CJ-FD-00001-A-1-002_0004.jpg', path: 'v0001/content/CJ-FD-00001-A-1-002_0004.jpg', hash: 'd88a29be1393bb7eb4b897d3...' },
-            { name: 'PROVENANCE_CJ-FD-00001-2026.08.29.json', path: 'v0001/content/PROVENANCE_CJ-FD-00001-2026.08.29.json', hash: '427adfcdc0cc94192775343c5...' }
+            { name: 'BV-FD-00001-A-1-002_0001.jpg', path: 'v0001/content/BV-FD-00001-A-1-002_0001.jpg', hash: 'dc5e06cdc8c58d7de56610c6...' },
+            { name: 'BV-FD-00001-A-1-002_0002.jpg', path: 'v0001/content/BV-FD-00001-A-1-002_0002.jpg', hash: '7ac8a2e168c1cd8aa0389779...' },
+            { name: 'BV-FD-00001-A-1-002_0003.jpg', path: 'v0001/content/BV-FD-00001-A-1-002_0003.jpg', hash: 'c225396de38264715aef9403...' },
+            { name: 'BV-FD-00001-A-1-002_0004.jpg', path: 'v0001/content/BV-FD-00001-A-1-002_0004.jpg', hash: 'd88a29be1393bb7eb4b897d3...' },
+            { name: 'PROVENANCE_BV-FD-00001-2026.08.29.json', path: 'v0001/content/PROVENANCE_BV-FD-00001-2026.08.29.json', hash: '427adfcdc0cc94192775343c5...' }
         ]
     },
     '025': {
-        id: 'CJ/CJ-FD-00001-A-2-01-025',
-        title: 'CJ/CJ-FD-00001-A-2-01-025',
-        message: 'Import din MaD-oais — pachet CJ-FD-00001-2026.08.29',
+        id: 'BV/BV-FD-00001-A-2-01-025',
+        title: 'BV/BV-FD-00001-A-2-01-025',
+        message: 'Import din MaD-oais — pachet BV-FD-00001-2026.08.29',
         date: '8/30/2026, 10:33:14 PM',
         files: [
-            { name: 'CJ-FD-00001-A-2-01-025_0001.jpg', path: 'v0001/content/CJ-FD-00001-A-2-01-025_0001.jpg', hash: 'a2acc59f562b36b01a489550...' },
-            { name: 'CJ-FD-00001-A-2-01-025_0002.jpg', path: 'v0001/content/CJ-FD-00001-A-2-01-025_0002.jpg', hash: '07c1b8563a504225a1a3fd86...' },
-            { name: 'CJ-FD-00001-A-2-01-025_0003.jpg', path: 'v0001/content/CJ-FD-00001-A-2-01-025_0003.jpg', hash: 'b522f5e1744ab6d8941a3b86...' },
-            { name: 'CJ-FD-00001-A-2-01-025_0004.jpg', path: 'v0001/content/CJ-FD-00001-A-2-01-025_0004.jpg', hash: 'd77ad807bf6359bc63444751...' },
-            { name: 'PROVENANCE_CJ-FD-00001-2026.08.29.json', path: 'v0001/content/PROVENANCE_CJ-FD-00001-2026.08.29.json', hash: 'cbb4d1a574ee72a2cbec1f2f...' }
+            { name: 'BV-FD-00001-A-2-01-025_0001.jpg', path: 'v0001/content/BV-FD-00001-A-2-01-025_0001.jpg', hash: 'a2acc59f562b36b01a489550...' },
+            { name: 'BV-FD-00001-A-2-01-025_0002.jpg', path: 'v0001/content/BV-FD-00001-A-2-01-025_0002.jpg', hash: '07c1b8563a504225a1a3fd86...' },
+            { name: 'BV-FD-00001-A-2-01-025_0003.jpg', path: 'v0001/content/BV-FD-00001-A-2-01-025_0003.jpg', hash: 'b522f5e1744ab6d8941a3b86...' },
+            { name: 'BV-FD-00001-A-2-01-025_0004.jpg', path: 'v0001/content/BV-FD-00001-A-2-01-025_0004.jpg', hash: 'd77ad807bf6359bc63444751...' },
+            { name: 'PROVENANCE_BV-FD-00001-2026.08.29.json', path: 'v0001/content/PROVENANCE_BV-FD-00001-2026.08.29.json', hash: 'cbb4d1a574ee72a2cbec1f2f...' }
         ]
     },
     '026': {
-        id: 'CJ/CJ-FD-00001-A-2-01-026',
-        title: 'CJ/CJ-FD-00001-A-2-01-026',
-        message: 'Import din MaD-oais — pachet CJ-FD-00001-2026.08.29',
+        id: 'BV/BV-FD-00001-A-2-01-026',
+        title: 'BV/BV-FD-00001-A-2-01-026',
+        message: 'Import din MaD-oais — pachet BV-FD-00001-2026.08.29',
         date: '8/30/2026, 10:33:15 PM',
         files: [
-            { name: 'CJ-FD-00001-A-2-01-026_0001.jpg', path: 'v0001/content/CJ-FD-00001-A-2-01-026_0001.jpg', hash: '20a7e67fe250729cd3cd699f...' },
-            { name: 'CJ-FD-00001-A-2-01-026_0002.jpg', path: 'v0001/content/CJ-FD-00001-A-2-01-026_0002.jpg', hash: '5ee90874949586c8c4f3e56b...' },
-            { name: 'CJ-FD-00001-A-2-01-026_0003.jpg', path: 'v0001/content/CJ-FD-00001-A-2-01-026_0003.jpg', hash: '17daf938fe3b9be93c2b5efe...' },
-            { name: 'CJ-FD-00001-A-2-01-026_0004.jpg', path: 'v0001/content/CJ-FD-00001-A-2-01-026_0004.jpg', hash: 'e911bc25ea44aa99c4ad28db...' },
-            { name: 'PROVENANCE_CJ-FD-00001-2026.08.29.json', path: 'v0001/content/PROVENANCE_CJ-FD-00001-2026.08.29.json', hash: '63cecc68e72ec1be41c162c2...' }
+            { name: 'BV-FD-00001-A-2-01-026_0001.jpg', path: 'v0001/content/BV-FD-00001-A-2-01-026_0001.jpg', hash: '20a7e67fe250729cd3cd699f...' },
+            { name: 'BV-FD-00001-A-2-01-026_0002.jpg', path: 'v0001/content/BV-FD-00001-A-2-01-026_0002.jpg', hash: '5ee90874949586c8c4f3e56b...' },
+            { name: 'BV-FD-00001-A-2-01-026_0003.jpg', path: 'v0001/content/BV-FD-00001-A-2-01-026_0003.jpg', hash: '17daf938fe3b9be93c2b5efe...' },
+            { name: 'BV-FD-00001-A-2-01-026_0004.jpg', path: 'v0001/content/BV-FD-00001-A-2-01-026_0004.jpg', hash: 'e911bc25ea44aa99c4ad28db...' },
+            { name: 'PROVENANCE_BV-FD-00001-2026.08.29.json', path: 'v0001/content/PROVENANCE_BV-FD-00001-2026.08.29.json', hash: '63cecc68e72ec1be41c162c2...' }
         ]
     }
 };
@@ -554,7 +554,7 @@ const CJ_OBJECTS = {
 // din ocflManager.js: extractCotaSegments + groupFilesByCotaDepth +
 // refineGroups + applyGroupingStrategy (excludere sidecar, reatașare la
 // fiecare grup rezultat). Nu atinge disc — lucrează pe fișierele deja
-// definite mai sus, în CJ_OBJECTS.
+// definite mai sus, în BV_OBJECTS.
 function extractCotaSegmentsDemo(name) {
     const pattern = /([A-Z]{1,2}-FD-\d{5}(?:-[A-Z0-9]+)*)/i;
     const m = pattern.exec(name);
@@ -625,22 +625,22 @@ function refineGroupsDemo(groups, fn) {
     return result;
 }
 
-// Fișierele-sursă ale simulării: cele 4 sub-obiecte CJ deja definite,
+// Fișierele-sursă ale simulării: cele 4 sub-obiecte BV deja definite,
 // aplatizate într-o singură listă de nume — ca la un transfer real,
 // înainte de orice grupare.
-const CJ_SOURCE_FILES = [];
+const BV_SOURCE_FILES = [];
 ['001', '002', '025', '026'].forEach(key => {
-    CJ_OBJECTS[key].files.forEach(f => {
-        if (!CJ_SOURCE_FILES.includes(f.name)) CJ_SOURCE_FILES.push(f.name);
+    BV_OBJECTS[key].files.forEach(f => {
+        if (!BV_SOURCE_FILES.includes(f.name)) BV_SOURCE_FILES.push(f.name);
     });
 });
-const CJ_SIDECAR_FILES = CJ_SOURCE_FILES.filter(isSidecarDemo);
-const CJ_CONTENT_FILES = CJ_SOURCE_FILES.filter(n => !isSidecarDemo(n));
+const BV_SIDECAR_FILES = BV_SOURCE_FILES.filter(isSidecarDemo);
+const BV_CONTENT_FILES = BV_SOURCE_FILES.filter(n => !isSidecarDemo(n));
 
 // Eșantion pentru breadcrumb — cel mai lung exemplu real din setul de mai
-// sus (CJ-FD-00001-A-2-01-025, 7 segmente) — la fel cum find-cota-sample
+// sus (BV-FD-00001-A-2-01-025, 7 segmente) — la fel cum find-cota-sample
 // alege exemplul din aplicația reală.
-const COTA_SAMPLE = { example: extractCotaSegmentsDemo('CJ-FD-00001-A-2-01-025'), minDepth: 3, maxDepth: 7 };
+const COTA_SAMPLE = { example: extractCotaSegmentsDemo('BV-FD-00001-A-2-01-025'), minDepth: 3, maxDepth: 7 };
 let cotaDepth = COTA_SAMPLE.maxDepth;
 
 function renderCotaBreadcrumb() {
@@ -672,7 +672,7 @@ function setCotaDepth(d) {
 function computeDemoGroups() {
     const isSkip = document.getElementById('modeNone').checked;
     if (isSkip) {
-        return [{ path: null, files: CJ_CONTENT_FILES.concat(CJ_SIDECAR_FILES) }];
+        return [{ path: null, files: BV_CONTENT_FILES.concat(BV_SIDECAR_FILES) }];
     }
     const useCotaDepth = document.getElementById('optCotaDepth').checked;
     const useLen = document.getElementById('optNameLen').checked;
@@ -680,14 +680,14 @@ function computeDemoGroups() {
     const useExt = document.getElementById('optExt').checked;
     const sepChar = document.getElementById('sepChar').value || '-';
 
-    let current = [{ path: null, files: CJ_CONTENT_FILES.slice() }];
+    let current = [{ path: null, files: BV_CONTENT_FILES.slice() }];
     if (useCotaDepth) current = refineGroupsDemo(current, names => groupByCotaDepthDemo(names, cotaDepth));
     if (useSep) current = refineGroupsDemo(current, names => groupBySeparatorDemo(names, sepChar));
     if (useLen) current = refineGroupsDemo(current, names => groupByLengthDemo(names));
     if (useExt) current = refineGroupsDemo(current, names => groupByExtensionDemo(names));
 
-    if (CJ_SIDECAR_FILES.length > 0) {
-        current = current.map(g => ({ path: g.path, files: g.files.concat(CJ_SIDECAR_FILES) }));
+    if (BV_SIDECAR_FILES.length > 0) {
+        current = current.map(g => ({ path: g.path, files: g.files.concat(BV_SIDECAR_FILES) }));
     }
     return current;
 }
@@ -696,29 +696,29 @@ function updateImportPreview() {
     const groups = computeDemoGroups();
     document.getElementById('previewCount').textContent = 'Would result in ' + groups.length + ' object(s).';
     document.getElementById('previewList').innerHTML = groups.map(g => {
-        const label = g.path ? ('CJ/' + g.path) : 'CJ/CJ-FD-00001';
+        const label = g.path ? ('BV/' + g.path) : 'BV/BV-FD-00001';
         return '<li>' + label + ' — ' + g.files.length + ' file(s)</li>';
     }).join('');
     const note = document.getElementById('sidecarNote');
     const cotaChecked = document.getElementById('optCotaDepth').checked && !document.getElementById('modeNone').checked;
     document.getElementById('cotaDepthBox').style.display = cotaChecked ? 'block' : 'none';
-    note.style.display = (CJ_SIDECAR_FILES.length > 0 && !document.getElementById('modeNone').checked) ? 'block' : 'none';
+    note.style.display = (BV_SIDECAR_FILES.length > 0 && !document.getElementById('modeNone').checked) ? 'block' : 'none';
 }
 
-// ── Arbore CJ dinamic, construit din gruparea EFECTIV aleasă la Import ────
-// Spre deosebire de buildCJTree() (structura fixă, de dinainte de această
+// ── Arbore BV dinamic, construit din gruparea EFECTIV aleasă la Import ────
+// Spre deosebire de buildBVTree() (structura fixă, de dinainte de această
 // funcționalitate), asta reflectă exact ce s-a ales în modal — dacă
 // adâncimea cotei contopește obiecte, arborele arată mai puține obiecte,
-// nu cele 4 originale. DYNAMIC_OBJECTS înlocuiește CJ_OBJECTS ca sursă
+// nu cele 4 originale. DYNAMIC_OBJECTS înlocuiește BV_OBJECTS ca sursă
 // pentru showObject(), pentru cheile nou generate.
 let DYNAMIC_OBJECTS = null;
 let DYNAMIC_TREE_HTML = null;
 
-function buildDynamicCJTree(groups) {
+function buildDynamicBVTree(groups) {
     const root = { children: new Map(), objects: [] };
     DYNAMIC_OBJECTS = {};
     groups.forEach((g, idx) => {
-        const pathParts = (g.path || 'CJ-FD-00001').split('/');
+        const pathParts = (g.path || 'BV-FD-00001').split('/');
         const cotaKey = pathParts[0];
         const extraParts = pathParts.slice(1);
         const segs = extractCotaSegmentsDemo(cotaKey);
@@ -742,9 +742,9 @@ function buildDynamicCJTree(groups) {
         const key = 'g' + idx;
         node.objects.push({ key, display: leafName });
         DYNAMIC_OBJECTS[key] = {
-            id: 'CJ/' + cotaKey,
-            title: 'CJ/' + cotaKey,
-            message: 'Import folder: CJ-FD-00001 (cota depth: ' + cotaDepth + ' segments)',
+            id: 'BV/' + cotaKey,
+            title: 'BV/' + cotaKey,
+            message: 'Import folder: BV-FD-00001 (cota depth: ' + cotaDepth + ' segments)',
             date: new Date().toLocaleString('en-US'),
             files: g.files.map(name => ({
                 name,
@@ -775,12 +775,12 @@ function renderDynamicTreeNode(node) {
     return html;
 }
 
-let importedCJ = false;
+let importedBV = false;
 let importedCS = true; // ca în screenshot, CS are deja 4
 
 function getCountyCount(code) {
-    if (code === 'CJ' && importedCJ) return 4;
-    if (code === 'CS' && importedCS) return 4;
+    if (code === 'BV' && importedBV) return 4;
+
     return 0;
 }
 
@@ -808,11 +808,9 @@ function renderTree(filter) {
         const children = document.createElement('ul');
         children.className = 'tree-children';
 
-        if (c.code === 'CJ' && importedCJ) {
-            children.innerHTML = DYNAMIC_TREE_HTML || buildCJTree();
-        } else if (c.code === 'CS' && importedCS) {
-            children.innerHTML = '<li class="tree-item" style="color:var(--text-muted);font-size:0.75rem;padding-left:12px;">(4 obiecte CS — structură similară)</li>';
-        }
+        if (c.code === 'BV' && importedBV) {
+            children.innerHTML = DYNAMIC_TREE_HTML || buildBVTree();
+        } 
 
         header.addEventListener('click', function() {
             const open = header.classList.toggle('open');
@@ -820,8 +818,8 @@ function renderTree(filter) {
             header.querySelector('.arrow').textContent = open ? '▼' : '▶';
         });
 
-        // expand CJ by default after import
-        if (c.code === 'CJ' && importedCJ) {
+        // expand BV by default after import
+        if (c.code === 'BV' && importedBV) {
             header.classList.add('open');
             children.classList.add('open');
             header.querySelector('.arrow').textContent = '▼';
@@ -855,8 +853,8 @@ function renderTree(filter) {
     });
 }
 
-function buildCJTree() {
-    // CJ → 00001 → A → 1 (001,002) / 2 → 01 (025,026)
+function buildBVTree() {
+    // BV → 00001 → A → 1 (001,002) / 2 → 01 (025,026)
     return '' +
         '<li>' +
 
@@ -893,7 +891,7 @@ function buildCJTree() {
 }
 
 function showObject(key) {
-    const obj = (DYNAMIC_OBJECTS && DYNAMIC_OBJECTS[key]) ? DYNAMIC_OBJECTS[key] : CJ_OBJECTS[key];
+    const obj = (DYNAMIC_OBJECTS && DYNAMIC_OBJECTS[key]) ? DYNAMIC_OBJECTS[key] : BV_OBJECTS[key];
     if (!obj) return;
     document.getElementById('noSelectionView').style.display = 'none';
     document.getElementById('objectDetailView').style.display = 'block';
@@ -985,15 +983,15 @@ function runSimulatedImport() {
         fill.style.width = percent + '%';
         pct.textContent = percent + '%';
         const g = groups[i - 1];
-        const name = g.path ? ('CJ/' + g.path) : 'CJ/CJ-FD-00001';
+        const name = g.path ? ('BV/' + g.path) : 'BV/BV-FD-00001';
         label.innerHTML = 'Se scrie obiectul ' + i + ' din ' + total + ': ' + name + '...<span class="progress-pct">' + percent + '%</span>';
         if (i < total) {
             setTimeout(step, 220 + Math.random() * 260);
         } else {
             setTimeout(() => {
                 hideModal('progressModal');
-                DYNAMIC_TREE_HTML = renderDynamicTreeNode(buildDynamicCJTree(groups));
-                importedCJ = true;
+                DYNAMIC_TREE_HTML = renderDynamicTreeNode(buildDynamicBVTree(groups));
+                importedBV = true;
                 renderTree(document.getElementById('searchInput').value);
                 document.getElementById('successCount').textContent = total + ' object(s)';
                 showModal('successModal');

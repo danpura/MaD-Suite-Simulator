@@ -11,535 +11,545 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MaD-Suite</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: #0a1424;
-    color: #d4d4ff;
-    font-family: 'consolas', monospace;
-    font-size: 1.15rem;
-    height: 100vh;
-    overflow: hidden;
-    position: relative;
-  }
-  #matrix {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    opacity: 0.6;
-    pointer-events: none;
-  }
-  .content {
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
- 
-  main {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-  }
-  .prompt { color: grey; user-select: none; }
+  <style>
+    /* ── Reset & Base ── */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      background: #0a1424;
+      color: #d4d4ff;
+      font-family: 'consolas', monospace;
+      font-size: 1.15rem;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
 
-#description-line {
-    margin-top: 20px;
-    padding: 12px 18px;
-    max-width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 0.7rem;
-    border: 1px solid transparent;          /* invizibil când e doar cursorul */
-    border-radius: 6px;
-    background: transparent;
-    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
-    line-height: 1.55;
-  }
- #description-line.has-content {
-  border-color: #7eb8ff;
-  background: rgba(19, 35, 56, 0.85);
-}
-#description-line strong {
-  font-weight: 700;
-  color: #ffe8cc;
-}
-  footer {
-    background: transparent;
-    padding: 10px 20px;
-    text-align: center;
-    font-size: 1rem;
-    color: grey;
+    /* ── Matrix Canvas ── */
+    #matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.6;
+      pointer-events: none;
+    }
 
-  }
-        footer::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 260px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #7eb8ff, transparent);
-        }  
-  .icon-img {
-    width: 32px;
-    height: 32px;
-    margin-right: 12px;
-    user-select: none;
-    pointer-events: none;
-    opacity: 0.95;
-  }
-  .mad-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-  }
-  .blink { animation: blink 1s step-end infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
-  .prompt img {
-    width: 68px;
-    object-fit: contain;
-    vertical-align: middle;
-}
+    .content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
+    /* ── Header ── */
+    header {
+      text-align: center;
+      padding: 14px 20px 10px;
+      border-bottom: 1px solid #1e3a5f;
+      position: relative;
+      flex-shrink: 0;
+    }
 
-/* ── Diagramă OAIS (înlocuiește cards-flex) ── */
-.oais-diagram-wrap {
-  display: flex;
-  justify-content: center;
-  margin: 14px 0 24px;
-}
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #7eb8ff, transparent);
+    }
 
-.oais-diagram {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  max-width: 1100px;
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
 
-}
+    .icon-img {
+      width: 40px;
+      height: 40px;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.95;
+    }
 
-.autor {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  min-width: 90px;
-}
+    .mad-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #d4e4ff;
+    }
 
-.autor-circle {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #2a2f38;
-  border: 2px solid #3d4450;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  color: #a0a8b8;
-}
+    .mad-title span {
+      color: #ffe8cc;
+    }
 
-.autor-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: #ffe8cc;
-  text-transform: uppercase;
-  font-family: 'consolas', monospace;
-}
+    .header-badge {
+      display: inline-block;
+      background: rgba(74, 222, 128, 0.08);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+      color: #4ade80;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.57rem;
+      letter-spacing: 2px;
+      padding: 4px 14px;
+      border-radius: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
 
-.flow {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
+    .header-badge span[title] {
+      cursor: help;
+      border-bottom: 1px dotted rgba(74, 222, 128, 0.4);
+      transition: border-color 0.2s, color 0.2s;
+    }
 
-.flow-box {
-  padding: 8px 14px;
-  border-radius: 6px;
-  white-space: nowrap;
-  letter-spacing: 0.02em;
-}
+    .header-badge span[title]:hover {
+      color: #86efac;
+      border-bottom-color: #86efac;
+    }
 
-.flow-sip {
-  background: transparent;
-  border: 2px solid green;
-}
+    .tools-badge {
+      color: #8892a4;
+      font-size: 0.6rem;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
 
-.flow-dip {
-  background: transparent;
-  border: 2px solid yellow;
-}
+    /* ── Main ── */
+    main {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
 
-.flow-arrow {
-  font-size: 1.5rem;
-  color: #ffe8cc;
-  line-height: 1;
-}
+    /* ── OAIS Diagram ── */
+    .oais-diagram-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 14px 0 24px;
+    }
 
-.oais-box {
-  flex: 1;
-  max-width: 280px;
-  background: transparent;
-  border: 2px solid #6b5fc7;
-  border-radius: 14px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: none;
-  gap: 12px;
-  box-shadow: 0 0 0 1px rgba(46, 204, 154, 0.15),
-              0 8px 24px rgba(0, 0, 0, 0.35);
-}
+    .oais-diagram {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      max-width: 1100px;
+    }
 
-.aip-box {
-  width: 100%;
-  background: transparent;
-  border: 1.5px solid #1f9b72;
-  border-radius: 8px;
-  padding: 12px 14px;
-}
+    .autor {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      min-width: 90px;
+    }
 
-.oais-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #3dd68c;
-  letter-spacing: 0.03em;
-  font-family: 'consolas', monospace;
-}
+    .autor-icon {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      opacity: 0.95;
+      user-select: none;
+      pointer-events: none;
+    }
 
-.oais-subtitle {
-  font-size: 0.72rem;
-  color: #6bb89a;
-  margin-top: 2px;
-}
+    .autor-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #ffe8cc;
+      text-transform: uppercase;
+      font-family: 'consolas', monospace;
+    }
 
-.aip-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #3dd68c;
-  letter-spacing: 0.03em;
-  font-family: 'consolas', monospace;
-}
+    .flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
 
-.aip-subtitle {
-  font-size: 0.72rem;
-  color: #6bb89a;
-  margin-top: 2px;
-}
+    .flow-box {
+      padding: 8px 14px;
+      border-radius: 6px;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
 
-/* Nodurile clickabile din diagramă (echivalentul .card de dinainte) */
-.diagram-node {
-  position: relative;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-}
+    .flow-sip {
+      background: transparent;
+      border: 2px solid green;
+    }
 
-.diagram-node-inner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+    .flow-dip {
+      background: transparent;
+      border: 2px solid yellow;
+    }
 
-.diagram-node-inner--center {
-  justify-content: center;
-  text-align: left;
-}
+    .flow-arrow {
+      font-size: 1.5rem;
+      color: #ffe8cc;
+      line-height: 1;
+    }
 
-.diagram-icon {
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  object-fit: contain;
-  opacity: 0.95;
-}
+    .oais-box {
+      flex: 1;
+      max-width: 280px;
+      background: transparent;
+      border: 2px solid #6b5fc7;
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow:
+        0 0 0 1px rgba(46, 204, 154, 0.15),
+        0 8px 24px rgba(0, 0, 0, 0.35);
+    }
 
-.diagram-node-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #e8e4ff;
-  white-space: nowrap;
-}
+    .aip-box {
+      width: 100%;
+      background: transparent;
+      border: 1.5px solid #1f9b72;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
 
-.diagram-node-sub {
-  font-size: 0.68rem;
-  color: rgba(232, 228, 255, 0.75);
-  margin-top: 1px;
-  white-space: nowrap;
-}
+    .oais-title,
+    .aip-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #3dd68c;
+      letter-spacing: 0.03em;
+      font-family: 'consolas', monospace;
+    }
 
-.flow-dip .diagram-node-title { color: #ffe8cc; }
-.flow-dip .diagram-node-sub { color: rgba(255, 232, 204, 0.75); }
+    .oais-subtitle,
+    .aip-subtitle {
+      font-size: 0.72rem;
+      color: #6bb89a;
+      margin-top: 2px;
+    }
 
-.flow-sip.diagram-node:hover {
-  border-color: white;
-}
+    /* Noduri clickabile */
+    .diagram-node {
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    }
 
-.flow-dip.diagram-node:hover {
-  border-color: white;
-}
+    .diagram-node-inner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-.aip-box.diagram-node:hover {
-  border-color: white;
-}
+    .diagram-node-inner--center {
+      justify-content: center;
+      text-align: left;
+    }
 
-@media (max-width: 800px) {
-  .oais-diagram {
-    flex-direction: column;
-    gap: 28px;
-  }
-  .flow {
-    transform: rotate(90deg);
-  }
-  .flow-box {
-    transform: rotate(-90deg);
-  }
-}
+    .diagram-icon {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      object-fit: contain;
+      opacity: 0.95;
+    }
 
-        /* ── Header ── */
-        header {
-            text-align: center;
-            padding: 14px 20px 10px;
-            border-bottom: 1px solid #1e3a5f;
-            position: relative;
-            flex-shrink: 0;
-        }
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 260px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #7eb8ff, transparent);
-        }
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-        .icon-img {
-            width: 40px;
-            height: 40px;
-            user-select: none;
-            pointer-events: none;
-            opacity: 0.95;
-        }
-        .mad-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #d4e4ff;
-        }
-        .mad-title span {
-            color: #4672f2;
-        }
-        .header-badge {
-            display: inline-block;
-            background: rgba(74, 222, 128, 0.08);
-            border: 1px solid rgba(74, 222, 128, 0.25);
-            color: #4ade80;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.57rem;
-            letter-spacing: 2px;
-            padding: 4px 14px;
-            border-radius: 2px;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
-        }
-        .header-badge span[title] {
-            cursor: help;
-            border-bottom: 1px dotted rgba(74, 222, 128, 0.4);
-            transition: border-color 0.2s, color 0.2s;
-        }
-        .header-badge span[title]:hover {
-            color: #86efac;
-            border-bottom-color: #86efac;
-        }
-        .tools-badge {
-            color: #8892a4;
-            font-size: 0.6rem;
-            letter-spacing: 0.5px;
-            margin-top: 2px;
-            font-family: 'IBM Plex Mono', monospace;
-        }
-        .header-author {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            border-top: 1px solid #1e3a5f;
-            padding-top: 10px;
-            margin-top: 6px;
-            width: 100%;
-            justify-content: center;
-        }
-        .author-line {
-            width: 52px;
-            height: 1px;
-            background: #1e3a5f;
-        }
+    .diagram-node-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #e8e4ff;
+      white-space: nowrap;
+    }
 
-        .author-tag {
-            font-size: 0.52rem;
-            color: #4ade80;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            background: rgba(74, 222, 128, 0.08);
-            border: 1px solid rgba(74, 222, 128, 0.25);
-            padding: 2px 10px;
-            border-radius: 2px;
-        }
-.autor-icon {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-  opacity: 0.95;
-  user-select: none;
-  pointer-events: none;
-}
-</style>
+    .diagram-node-sub {
+      font-size: 0.68rem;
+      color: rgba(232, 228, 255, 0.75);
+      margin-top: 1px;
+      white-space: nowrap;
+    }
+
+    .flow-dip .diagram-node-title {
+      color: #ffe8cc;
+    }
+
+    .flow-dip .diagram-node-sub {
+      color: rgba(255, 232, 204, 0.75);
+    }
+
+    .flow-sip.diagram-node:hover,
+    .flow-dip.diagram-node:hover,
+    .aip-box.diagram-node:hover {
+      border-color: white;
+    }
+
+    /* ── Description line ── */
+    #description-line {
+      margin-top: 20px;
+      padding: 12px 18px;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 0.7rem;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+      line-height: 1.55;
+    }
+
+    #description-line.has-content {
+      border-color: #7eb8ff;
+      background: rgba(19, 35, 56, 0.85);
+    }
+
+    #description-line strong {
+      font-weight: 700;
+      color: #ffe8cc;
+    }
+
+    .blink {
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: transparent;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 1rem;
+      color: grey;
+      position: relative;
+    }
+
+    footer::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #7eb8ff, transparent);
+    }
+
+    .header-author {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid #1e3a5f;
+      padding-top: 10px;
+      margin-top: 6px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .author-line {
+      width: 52px;
+      height: 1px;
+      background: #1e3a5f;
+    }
+
+    .author-tag {
+      font-size: 0.52rem;
+      color: #4ade80;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: rgba(74, 222, 128, 0.08);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+      padding: 2px 10px;
+      border-radius: 2px;
+      opacity: 0.85;
+    }
+
+    .author-tag a {
+      color: #4ade80;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .author-tag a:hover {
+      opacity: 0.6;
+    }
+
+    .author-tag .separator {
+      color: #4672f2;
+      margin: 0 4px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 800px) {
+      .oais-diagram {
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .flow {
+        transform: rotate(90deg);
+      }
+
+      .flow-box {
+        transform: rotate(-90deg);
+      }
+    }
+  </style>
 </head>
 <body>
   <canvas id="matrix"></canvas>
+
   <div class="content">
     <header>
+      <div class="header-top">
+        <img src="logo/logo5.png" class="icon-img" alt="MaD-OAIS Logo">
+        <div>
+          <span class="mad-title">
+            MaD Suite · <span>MANAGEMENTUL ARHIVELOR DIGITALE</span>
+          </span>
+        </div>
+      </div>
 
-<div style="display:flex; align-items:center; gap:14px; justify-content:center; margin-bottom:20px;">
-  <img src="logo/logo5.png" class="icon-img" alt="MaD-OAIS Logo">
-  <div style="text-align:left;">
-    <span class="logo mad-title">
-      MaD Suite · <span style="color:#ffe8cc;">MANAGEMENTUL ARHIVELOR DIGITALE</span>
-    </span>
-  </div>
-</div>
-<div class="header-badge">
-  <span title="Open Archival Information System – Model de referință pentru sisteme de arhivare digitală">OAIS (ISO 14721:2025)</span> · 
-  <span title="Audit și certificare pentru repozitorii digitale de încredere">ISO 16363:2012</span> · 
-  <span title="Dicționar de date și metadate pentru conservare și proveniență digitală">PREMIS v3.0</span> · 
-  <span title="Standard pentru arhivarea pe termen lung a documentelor electronice în format PDF">ISO 19005 (PDF/A)</span> · 
-  <span title="Metadate pentru gestionarea documentelor de arhivă (Records Management)">ISO 23081</span> · 
-  <span title="Oxford Common File Layout – Structură fizică de fișiere independentă de aplicație">OCFL v1.1.1 (2024-11-07)</span>
-</div>
- <div class="tools-badge">
-  Ecosistem: Siegfried (PRONOM) · veraPDF · ExifTool · ImageMagick · QPDF · Ghostscript · FFmpeg|FFProbe · SHA-512|SHA-256|SHA-1|MD5|BLAKE2b-512
-</div>
+      <div class="header-badge">
+        <span title="Open Archival Information System – Model de referință pentru sisteme de arhivare digitală">OAIS (ISO 14721:2025)</span> ·
+        <span title="Audit și certificare pentru repozitorii digitale de încredere">ISO 16363:2012</span> ·
+        <span title="Dicționar de date și metadate pentru conservare și proveniență digitală">PREMIS v3.0</span> ·
+        <span title="Standard pentru arhivarea pe termen lung a documentelor electronice în format PDF">ISO 19005 (PDF/A)</span> ·
+        <span title="Metadate pentru gestionarea documentelor de arhivă (Records Management)">ISO 23081</span> ·
+        <span title="Oxford Common File Layout – Structură fizică de fișiere independentă de aplicație">OCFL v1.1.1 (2024-11-07)</span>
+      </div>
+
+      <div class="tools-badge">
+        Ecosistem: Siegfried (PRONOM) · veraPDF · ExifTool · ImageMagick · QPDF · Ghostscript · FFmpeg|FFProbe · SHA-512|SHA-256|SHA-1|MD5|BLAKE2b-512
+      </div>
     </header>
+
     <main>
+      <div class="oais-diagram-wrap">
+        <div class="oais-diagram">
 
-      <div class="terminal-line"></div>
- <div class="oais-diagram-wrap">
-  <div class="oais-diagram">
-
-<!-- EMITENT (Producer) -->
-    <div class="autor">      
-        <img src="logo/emitent.png" class="autor-icon" alt="Emitent">
-      <div class="autor-label">EMITENT</div>
-    </div>
-
-    <!-- SIP -->
-    <div class="flow">
-      <div class="flow-box flow-sip diagram-node"          
-           onmouseover="showDescription('sip')"
-           onmouseout="hideDescription()"
-           onclick="startApp('Test_imagini/index_sip.html')">
-        <div class="diagram-node-inner">
-          <img class="diagram-icon" src="logo/logo1.png" alt="SIP Logo">
-          <div>
-            <div class="diagram-node-title">MaD-SIP-Generator</div>
-            <div class="diagram-node-sub">Generare pachet transmitere</div>
+          <!-- EMITENT (Producer) -->
+          <div class="autor">
+            <img src="logo/emitent.png" class="autor-icon" alt="Emitent">
+            <div class="autor-label">EMITENT</div>
           </div>
+
+          <!-- SIP -->
+          <div class="flow">
+            <div class="flow-box flow-sip diagram-node"
+                 onmouseover="showDescription('sip')"
+                 onmouseout="hideDescription()"
+                 onclick="startApp('Test_imagini/index_sip.html')">
+              <div class="diagram-node-inner">
+                <img class="diagram-icon" src="logo/logo1.png" alt="SIP Logo">
+                <div>
+                  <div class="diagram-node-title">MaD-SIP-Generator</div>
+                  <div class="diagram-node-sub">Generare pachet transmitere</div>
+                </div>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+          </div>
+
+          <!-- OAIS -->
+          <div class="oais-box">
+            <div class="aip-box diagram-node"
+                 onmouseover="showDescription('ingestor')"
+                 onmouseout="hideDescription()"
+                 onclick="startApp('oais.html')">
+              <div class="diagram-node-inner diagram-node-inner--center">
+                <img class="diagram-icon" src="logo/logo3.png" alt="OAIS Logo">
+                <div>
+                  <div class="oais-title">MaD-OAIS</div>
+                  <div class="oais-subtitle">Ingestie, prezervare</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Derivator -->
+            <div class="aip-box diagram-node"
+                 onmouseover="showDescription('derivator')"
+                 onmouseout="hideDescription()"
+                 onclick="startApp('derivate.html')">
+              <div class="diagram-node-inner diagram-node-inner--center">
+                <img class="diagram-icon" src="logo/logo4.png" alt="Derivator Logo">
+                <div>
+                  <div class="aip-title">MaD-Derivator</div>
+                  <div class="aip-subtitle">Derivate de acces</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Repository-Manager -->
+          <div class="flow">
+            <div class="flow-box flow-dip diagram-node"
+                 onmouseover="showDescription('ocfl')"
+                 onmouseout="hideDescription()"
+                 onclick="startApp('ocfl.html')">
+              <div class="diagram-node-inner">
+                <img class="diagram-icon" src="logo/logo2.png" alt="Repository Logo">
+                <div>
+                  <div class="diagram-node-title">MaD-Repository-Manager</div>
+                  <div class="diagram-node-sub">Depozit OCFL</div>
+                </div>
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+          </div>
+
+          <!-- BENEFICIAR (Consumer) -->
+          <div class="autor">
+            <img src="logo/beneficiar.png" class="autor-icon" alt="Beneficiar">
+            <div class="autor-label">BENEFICIAR</div>
+          </div>
+
         </div>
       </div>
-      <div class="flow-arrow">→</div>
-    </div>
-
-    <!-- OAIS -->
-    <div class="oais-box">
-      <div class="aip-box diagram-node"          
-           onmouseover="showDescription('ingestor')"
-           onmouseout="hideDescription()"
-           onclick="startApp('oais.html')">
-        <div class="diagram-node-inner diagram-node-inner--center">
-          <img class="diagram-icon" src="logo/logo3.png" alt="OAIS Logo">
-          <div>
-            <div class="oais-title">MaD-OAIS</div>
-            <div class="oais-subtitle">Ingestie, prezervare</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Derivator -->
-      <div class="aip-box diagram-node"           
-           onmouseover="showDescription('derivator')"
-           onmouseout="hideDescription()"
-           onclick="startApp('derivate.html')">
-        <div class="diagram-node-inner diagram-node-inner--center">
-          <img class="diagram-icon" src="logo/logo4.png" alt="Derivator Logo">
-          <div>
-            <div class="aip-title">MaD-Derivator</div>
-            <div class="aip-subtitle">Derivate de acces</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Repository-Manager -->
-    <div class="flow">
-      <div class="flow-box flow-dip diagram-node"
-           onmouseover="showDescription('ocfl')"
-           onmouseout="hideDescription()"
-           onclick="startApp('ocfl.html')">
-        <div class="diagram-node-inner">
-          <img class="diagram-icon" src="logo/logo2.png" alt="Repository Logo">
-          <div>
-            <div class="diagram-node-title">MaD-Repository-Manager</div>
-            <div class="diagram-node-sub">Depozit OCFL</div>
-          </div>
-        </div>
-      </div>
-      <div class="flow-arrow">→</div>
-    </div>
-
-    <!-- BENEFICIAR (Consumer) -->
-    <div class="autor">
-      <img src="logo/beneficiar.png" class="autor-icon" alt="Emitent">
-      <div class="autor-label">BENEFICIAR</div>
-    </div>
-  </div>
-</div>
 
       <!-- Linia cu descriere dinamică + cursor -->
-		<div class="terminal-line" id="description-line">
+      <div class="terminal-line" id="description-line">
+        <span id="desc-text" class="blink" style="color: #8892a4;">▰</span>
+      </div>
 
-			<span id="desc-text" class="blink" style="color: #8892a4;">▰</span>
-		</div>
       <!-- Status lansare -->
       <div id="status-line"></div>
     </main>
+
     <footer>
-	  <div class="header-author">
-    <div class="author-line"></div>
-    <span class="author-name"> </span>
-    <span class="author-tag">&copy; 2026 &middot; Concept: Bogdan Florin Popovici &middot; Dev: Dan Silviu Pura</span>
-    <div class="author-line"></div>
-  </div>
-	</footer>
+      <div class="header-author">
+        <div class="author-line"></div>
+        <span class="author-tag">
+          © 2026 · Concept: Bogdan Florin Popovici · Dev: Dan Silviu Pura
+          <span class="separator">|</span>
+          <a href="https://github.com/danpura" target="_blank">GitHub</a>
+        </span>
+        <div class="author-line"></div>
+      </div>
+    </footer>
   </div>
 
   <script>
-// ── Rețea Interconectată de Noduri (Digital Constellation) ───────
+    // ── Rețea Interconectată de Noduri (Digital Constellation) ───────
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
 
@@ -547,51 +557,45 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
+
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
     // Configurare noduri
-    const nodesCount = 65; // Numărul total de noduri pe ecran
-    const maxDistance = 140; // Distanța maximă la care se conectează nodurile între ele
+    const nodesCount = 65;
+    const maxDistance = 140;
     const nodes = [];
 
-    // Generare noduri cu poziție și viteză aleatoare
     for (let i = 0; i < nodesCount; i++) {
       nodes.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.8, // Viteza pe X
-        vy: (Math.random() - 0.5) * 0.8, // Viteza pe Y
-        radius: Math.random() * 1.8 + 1, // Dimensiunea punctului
-        color: Math.random() > 0.3 ? '#7eb8ff' : '#3dd68c' // Nuanțe de albastru/verde
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8,
+        radius: Math.random() * 1.8 + 1,
+        color: Math.random() > 0.3 ? '#7eb8ff' : '#3dd68c'
       });
     }
 
     function animateNodes() {
-      // Curățare Canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Actualizare poziții și desenare noduri
       for (let i = 0; i < nodes.length; i++) {
         let nodeA = nodes[i];
-
         nodeA.x += nodeA.vx;
         nodeA.y += nodeA.vy;
 
-        // Rebound la atingerea marginilor ecranului
         if (nodeA.x < 0 || nodeA.x > canvas.width) nodeA.vx *= -1;
         if (nodeA.y < 0 || nodeA.y > canvas.height) nodeA.vy *= -1;
 
-        // Desenare punct (nod)
         ctx.beginPath();
         ctx.arc(nodeA.x, nodeA.y, nodeA.radius, 0, Math.PI * 2);
         ctx.fillStyle = nodeA.color;
         ctx.shadowBlur = 8;
         ctx.shadowColor = nodeA.color;
         ctx.fill();
-        ctx.shadowBlur = 0; // Resetare umbră pentru performanță
+        ctx.shadowBlur = 0;
 
-        // Conectare prin linii cu nodurile vecine
         for (let j = i + 1; j < nodes.length; j++) {
           let nodeB = nodes[j];
           let dx = nodeA.x - nodeB.x;
@@ -599,7 +603,6 @@
           let dist = Math.sqrt(dx * dx + dy * dy);
 
           if (dist < maxDistance) {
-            // Opacitatea liniei scade pe măsură ce distanța crește
             let alpha = (1 - dist / maxDistance) * 0.25;
             ctx.beginPath();
             ctx.moveTo(nodeA.x, nodeA.y);
@@ -614,79 +617,77 @@
       requestAnimationFrame(animateNodes);
     }
 
-    // Start animație
     animateNodes();
 
     // ── Descrieri ──────────────────────────────────────────────────
-const descriptions = {
-  sip: "Aplicație desktop Electron pentru generarea pachetelor de transmitere SIP (Submission Information Package) pentru arhive digitale, conceput pentru a crea pachete standardizate, verificate criptografic, destinate conservării patrimoniului digital.<br><br>" +
-      "• <strong>Scanare automată a fișierelor</strong> – indexare recursivă cu hashing SHA-256 în paralel<br>" +
-      "• <strong>Identificare de format</strong> – integrare cu Siegfried (baza de date PRONOM)<br>" +
-      "• <strong>Detectare duplicate</strong> – identifică fișiere identice după hash<br>" +
-      "• <strong>Corectare extensii</strong> – detectează și repară extensii greșite<br>" +
-      "• <strong>Integritate criptografică</strong> – sistem dual de hash (anchor hash + hash ZIP final)<br>" +
-      "• <strong>Generare manifest</strong> – MI-SIP (intern) și ME-SIP (extern)<br>" +
-      "• <strong>Păstrarea structurii directoarelor</strong> în metadate",
+    const descriptions = {
+      sip: "Aplicație desktop Electron pentru generarea pachetelor de transmitere SIP (Submission Information Package) pentru arhive digitale, conceput pentru a crea pachete standardizate, verificate criptografic, destinate conservării patrimoniului digital.<br><br>" +
+           "• <strong>Scanare automată a fișierelor</strong> – indexare recursivă cu hashing SHA-256 în paralel<br>" +
+           "• <strong>Identificare de format</strong> – integrare cu Siegfried (baza de date PRONOM)<br>" +
+           "• <strong>Detectare duplicate</strong> – identifică fișiere identice după hash<br>" +
+           "• <strong>Corectare extensii</strong> – detectează și repară extensii greșite<br>" +
+           "• <strong>Integritate criptografică</strong> – sistem dual de hash (anchor hash + hash ZIP final)<br>" +
+           "• <strong>Generare manifest</strong> – MI-SIP (intern) și ME-SIP (extern)<br>" +
+           "• <strong>Păstrarea structurii directoarelor</strong> în metadate",
 
-  ingestor: "Aplicație desktop Electron destinată managementului arhivei digitale, construită pe modelul de referință <strong>ISO 14721 (OAIS)</strong> și orientată către fluxurile de ingestie și prezervare digitală.<br><br>" +
+      ingestor: "Aplicație desktop Electron destinată managementului arhivei digitale, construită pe modelul de referință <strong>ISO 14721 (OAIS)</strong> și orientată către fluxurile de ingestie și prezervare digitală.<br><br>" +
+                "<strong>FLUX DE INGESTIE ȘI PREZERVARE</strong><br>" +
+                "• <strong>Procesare SIP</strong> – ingestia pachetelor de transmitere și verificarea structurii acestora.<br>" +
+                "• <strong>Procesare arhive ZIP</strong> – deschiderea, extragerea și procesarea automată a conținutului.<br>" +
+                "• <strong>Validare manifest</strong> – verificarea manifestelor interne și externe și a integrității conținutului.<br>" +
+                "• <strong>Analiză tehnică</strong> – identificarea formatelor și extragerea metadatelor tehnice necesare prezervării.<br>" +
+                "• <strong>Metadate de prezervare</strong> – managementul informațiilor tehnice și al evenimentelor asociate obiectelor digitale.<br>" +
+                "• <strong>Identificare PRONOM</strong> – înregistrarea formatului identificat și a identificatorului PUID.<br>" +
+                "• <strong>Jurnal PREMIS</strong> – istoricul complet al evenimentelor generate în timpul ingestiei.<br>" +
+                "• <strong>Transfer către OCFL</strong> – transferul obiectelor procesate și validate în depozitul de conservare digitală.<br><br>",
 
-        "<strong>FLUX DE INGESTIE ȘI PREZERVARE</strong><br>" +
-        "• <strong>Procesare SIP</strong> – ingestia pachetelor de transmitere și verificarea structurii acestora.<br>" +
-        "• <strong>Procesare arhive ZIP</strong> – deschiderea, extragerea și procesarea automată a conținutului.<br>" +
-        "• <strong>Validare manifest</strong> – verificarea manifestelor interne și externe și a integrității conținutului.<br>" +
-        "• <strong>Analiză tehnică</strong> – identificarea formatelor și extragerea metadatelor tehnice necesare prezervării.<br>" +
-        "• <strong>Metadate de prezervare</strong> – managementul informațiilor tehnice și al evenimentelor asociate obiectelor digitale.<br>" +
-		        "• <strong>Identificare PRONOM</strong> – înregistrarea formatului identificat și a identificatorului PUID.<br>" +
-		 "• <strong>Jurnal PREMIS</strong> – istoricul complet al evenimentelor generate în timpul ingestiei.<br>" +
-        "• <strong>Transfer către OCFL</strong> – transferul obiectelor procesate și validate în depozitul de conservare digitală.<br><br>",
+      ocfl: "Aplicație desktop Electron pentru conservare digitală pe termen lung, conformă cu <strong>OCFL 1.1.1:2024 (Oxford Common File Layout)</strong>.<br><br>" +
+            "<strong>LAYOUT DE STOCARE</strong><br>" +
+            "• <strong>Distribuție pe disc bazată pe SHA-256</strong> – fiecare obiect este plasat pe disc pe baza SHA-256 al ID-ului logic, utilizând extensia OCFL <strong>0004-hashed-n-tuple-storage-layout</strong>.<br>" +
+            "• <strong>Foldere imbricate opace</strong> – 3 segmente a câte 3 caractere, urmate de folderul final care conține hash-ul complet, asigurând distribuția uniformă a zeci de mii de obiecte.<br>" +
+            "• <strong>inventory.json</strong> – câmpul <strong>id</strong> rămâne sursa de adevăr pentru identitatea obiectului.<br><br>" +
+            "<strong>VERSIONARE ȘI INTEGRITATE</strong><br>" +
+            "• <strong>Deduplicare automată pe SHA-512</strong> – conținutul identic reîncărcat nu ocupă spațiu suplimentar.<br>" +
+            "• <strong>Fixity multi-algoritm</strong> – fiecare fișier nou primește checksum-uri SHA-512, SHA-256, SHA-1, MD5 și BLAKE2b-512, calculate simultan într-o singură citire a fișierului sursă.<br>" +
+            "• <strong>Stergere logică</strong> – elimină fișierul din versiunea curentă, păstrându-l recuperabil în istoricul obiectului.<br>" +
+            "• <strong>Purjare conformă OCFL</strong> – eliminare definitivă a obiectului întreg sau a unui fișier individual din întregul istoric, cu tombstone și jurnal de audit.<br>" +
+            "• <strong>Diff vizual între versiuni</strong> – identifică elementele adăugate, eliminate, modificate și redenumite.",
 
-  ocfl: "Aplicație desktop Electron pentru conservare digitală pe termen lung, conformă cu <strong>OCFL 1.1.1:2024 (Oxford Common File Layout)</strong>.<br><br>" +
-        "<strong>LAYOUT DE STOCARE</strong><br>" +
-        "• <strong>Distribuție pe disc bazată pe SHA-256</strong> – fiecare obiect este plasat pe disc pe baza SHA-256 al ID-ului logic, utilizând extensia OCFL <strong>0004-hashed-n-tuple-storage-layout</strong>.<br>" +
-        "• <strong>Foldere imbricate opace</strong> – 3 segmente a câte 3 caractere, urmate de folderul final care conține hash-ul complet, asigurând distribuția uniformă a zeci de mii de obiecte.<br>" +
-        "• <strong>inventory.json</strong> – câmpul <strong>id</strong> rămâne sursa de adevăr pentru identitatea obiectului.<br><br>" +
-        "<strong>VERSIONARE ȘI INTEGRITATE</strong><br>" +
-        "• <strong>Deduplicare automată pe SHA-512</strong> – conținutul identic reîncărcat nu ocupă spațiu suplimentar.<br>" +
-        "• <strong>Fixity multi-algoritm</strong> – fiecare fișier nou primește checksum-uri SHA-512, SHA-256, SHA-1, MD5 și BLAKE2b-512, calculate simultan într-o singură citire a fișierului sursă.<br>" +
-        "• <strong>Stergere logică</strong> – elimină fișierul din versiunea curentă, păstrându-l recuperabil în istoricul obiectului.<br>" +
-        "• <strong>Purjare conformă OCFL</strong> – eliminare definitivă a obiectului întreg sau a unui fișier individual din întregul istoric, cu tombstone și jurnal de audit.<br>" +
-        "• <strong>Diff vizual între versiuni</strong> – identifică elementele adăugate, eliminate, modificate și redenumite.",
+      derivator: "Modul integrat în MaD-oais, pentru normalizarea masterelor și generarea automată a formatelor derivate necesare accesului și utilizării conținutului digital.<br><br>" +
+                 "<strong>NORMALIZARE TIFF MASTER</strong><br>" +
+                 "• <strong>Normalizare lossless</strong> – generare TIFF Master cu compresie LZW sau ZIP, la rezoluția DPI configurată.<br>" +
+                 "• <strong>Procesare imagine</strong> – control asupra spațiului de culoare, adâncimii de culoare, layere-lor și metadatelor.<br>" +
+                 "• <strong>Transformări</strong> – rotire și crop manual al marginilor, cu posibilitatea configurării numerotării fișierelor.<br><br>" +
+                 "<strong>GENERARE DERIVATE INDIVIDUALE - IMAGINI</strong><br>" +
+                 "• <strong>Conversie multi-format</strong> – generare JPG, JPEG 2000 (JP2), PDF și PDF/A-2B din TIFF, JPEG, PNG, BMP sau PDF.<br>" +
+                 "• <strong>Parametri configurabili</strong> – DPI, calitate și compresie, contrast, sharpen și adâncime de culoare.<br>" +
+                 "• <strong>Procesare în lot</strong> – aplicarea regulilor de conversie asupra unor selecții de fișiere sau directoare întregi.<br><br>" +
+                 "<strong>PDF PAGINI MULTIPLE</strong><br>" +
+                 "• <strong>Generare PDF</strong> – combinarea imaginilor în documente PDF standard sau PDF/A-2B pentru arhivare.<br>" +
+                 "• <strong>Preseturi rapide</strong> – configurații optimizate pentru Web/Acces, Arhivă și Print.<br>" +
+                 "• <strong>Control dimensional</strong> – formate A4, A3, A5, Letter, Legal sau dimensiuni personalizate, cu păstrarea proporțiilor.<br>" +
+                 "• <strong>Split PDF</strong> – fragmentarea documentelor după numărul de pagini sau după dimensiunea estimată în MB."
+    };
 
-derivator: "Modul integrat în MaD-oais, pentru normalizarea masterelor și generarea automată a formatelor derivate necesare accesului și utilizării conținutului digital.<br><br>" +
+    function showDescription(type) {
+      const line = document.getElementById('description-line');
+      const text = document.getElementById('desc-text');
+      text.innerHTML = descriptions[type];
+      text.classList.remove('blink');
+      line.classList.add('has-content');
+    }
 
-           "<strong>NORMALIZARE TIFF MASTER</strong><br>" +
-           "• <strong>Normalizare lossless</strong> – generare TIFF Master cu compresie LZW sau ZIP, la rezoluția DPI configurată.<br>" +
-           "• <strong>Procesare imagine</strong> – control asupra spațiului de culoare, adâncimii de culoare, layere-lor și metadatelor.<br>" +
-           "• <strong>Transformări</strong> – rotire și crop manual al marginilor, cu posibilitatea configurării numerotării fișierelor.<br><br>" +
+    function hideDescription() {
+      const line = document.getElementById('description-line');
+      const text = document.getElementById('desc-text');
+      text.innerHTML = '▰';
+      text.classList.add('blink');
+      line.classList.remove('has-content');
+    }
 
-           "<strong>GENERARE DERIVATE INDIVIDUALE - IMAGINI</strong><br>" +
-           "• <strong>Conversie multi-format</strong> – generare JPG, JPEG 2000 (JP2), PDF și PDF/A-2B din TIFF, JPEG, PNG, BMP sau PDF.<br>" +
-           "• <strong>Parametri configurabili</strong> – DPI, calitate și compresie, contrast, sharpen și adâncime de culoare.<br>" +
-           "• <strong>Procesare în lot</strong> – aplicarea regulilor de conversie asupra unor selecții de fișiere sau directoare întregi.<br><br>" +
-
-           "<strong>PDF PAGINI MULTIPLE</strong><br>" +
-           "• <strong>Generare PDF</strong> – combinarea imaginilor în documente PDF standard sau PDF/A-2B pentru arhivare.<br>" +
-           "• <strong>Preseturi rapide</strong> – configurații optimizate pentru Web/Acces, Arhivă și Print.<br>" +
-           "• <strong>Control dimensional</strong> – formate A4, A3, A5, Letter, Legal sau dimensiuni personalizate, cu păstrarea proporțiilor.<br>" +
-           "• <strong>Split PDF</strong> – fragmentarea documentelor după numărul de pagini sau după dimensiunea estimată în MB."
-};
-function showDescription(type) {
-  const line = document.getElementById('description-line');
-  const text = document.getElementById('desc-text');
-  text.innerHTML = descriptions[type];
-  text.classList.remove('blink');
-  line.classList.add('has-content');
-}
-
-function hideDescription() {
-  const line = document.getElementById('description-line');
-  const text = document.getElementById('desc-text');
-  text.innerHTML = '▰';
-  text.classList.add('blink');
-  line.classList.remove('has-content');
-}
     // ── Lansare HTML (același folder) ──────────────────────────────
     let statusTimer = null;
+
     function setStatus(msg, color = '#7fffb2') {
       const el = document.getElementById('status-line');
       el.style.color = color;
@@ -697,10 +698,8 @@ function hideDescription() {
 
     function startApp(htmlFile) {
       setStatus(`▸ Se deschide ${htmlFile}…`, '#d4d4ff');
-      // Navigare în aceeași fereastră (sau schimbă cu window.open(htmlFile) dacă vrei tab nou)
       window.location.href = htmlFile;
     }
-
   </script>
 </body>
 </html>

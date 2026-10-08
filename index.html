@@ -470,7 +470,7 @@
             <div class="flow-arrow">→</div>
           </div>
 
-          <!-- OAIS -->
+<!-- OAIS -->
           <div class="oais-box">
             <div class="aip-box diagram-node"
                  onmouseover="showDescription('ingestor')"
@@ -495,6 +495,20 @@
                 <div>
                   <div class="aip-title">MaD-Derivator</div>
                   <div class="aip-subtitle">Derivate de acces</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MaD-Mail -->
+            <div class="aip-box diagram-node"
+                 onmouseover="showDescription('mail')"
+                 onmouseout="hideDescription()"
+                 onclick="startApp('mail.html')">
+              <div class="diagram-node-inner diagram-node-inner--center">
+                <img class="diagram-icon" src="logo/logo5.png" alt="Mail Logo">
+                <div>
+                  <div class="aip-title">M@D-Mail</div>
+                  <div class="aip-subtitle">Arhivare mesaje</div>
                 </div>
               </div>
             </div>
@@ -670,7 +684,14 @@
                  "• <strong>Generare PDF</strong> – combinarea imaginilor în documente PDF standard sau PDF/A-2B pentru arhivare.<br>" +
                  "• <strong>Preseturi rapide</strong> – configurații optimizate pentru Web/Acces, Arhivă și Print.<br>" +
                  "• <strong>Control dimensional</strong> – formate A4, A3, A5, Letter, Legal sau dimensiuni personalizate, cu păstrarea proporțiilor.<br>" +
-                 "• <strong>Split PDF</strong> – fragmentarea documentelor după numărul de pagini sau după dimensiunea estimată în MB."
+                 "• <strong>Split PDF</strong> – fragmentarea documentelor după numărul de pagini sau după dimensiunea estimată în MB.",
+
+      mail: "Aplicație desktop Electron pentru arhivarea și prezervarea mesajelor electronice (email) conform standardelor de conservare digitală.<br><br>" +
+            "• <strong>Import multi-format</strong> – suport pentru mbox, eml, pst, msg<br>" +
+            "• <strong>Normalizare</strong> – conversie în format de arhivă (EML + metadate)<br>" +
+            "• <strong>Extragere metadate</strong> – expeditor, destinatari, subiect, dată, atașamente<br>" +
+            "• <strong>Integritate</strong> – hashing SHA-256 pentru fiecare mesaj și atașament<br>" +
+            "• <strong>Căutare și filtrare</strong> – indexare full-text a conținutului mesajelor."
     };
 
     function showDescription(type) {

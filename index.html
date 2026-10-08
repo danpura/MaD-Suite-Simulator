@@ -419,7 +419,27 @@
 	  align-items: stretch;   /* ca Mail să aibă aceeași lățime ca oais-box */
 	  gap: 12px;
 	  max-width: 280px;       /* aceeași lățime ca .oais-box */
-}
+	}
+	.social-link {
+	  display: inline-flex;
+	  align-items: center;
+	  gap: 5px;
+	  color: #4ade80;
+	  text-decoration: none;
+	  transition: opacity 0.2s, color 0.2s;
+	  vertical-align: middle;
+	}
+
+	.social-link:hover {
+	  opacity: 0.65;
+	  color: #86efac;
+	}
+
+	.social-link svg {
+	  flex-shrink: 0;
+	  display: inline-block;
+	  vertical-align: middle;
+	}
   </style>
 </head>
 <body>
@@ -558,21 +578,41 @@
       <div id="status-line"></div>
     </main>
 
-    <footer>
-      <div class="header-author">
-        <div class="author-line"></div>
-        <span class="author-tag">
-          © 2026 · Concept: Bogdan Florin Popovici · Dev: Dan Silviu Pura
-          <span class="separator">|</span>
-			<a href="https://github.com/danpura" target="_blank" style="color: #4ade80; text-decoration: none; display: inline-flex; align-items: center; vertical-align: middle; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'" title="GitHub">
-			  <svg height="14" width="14" viewBox="0 0 16 16" fill="currentColor" style="display: inline-block; vertical-align: middle;">
-				<path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
-			  </svg>
-			</a>
-        </span>
-        <div class="author-line"></div>
-      </div>
-    </footer>
+<footer>
+  <div class="header-author">
+    <div class="author-line"></div>
+    <span class="author-tag">
+      © 2026 · Concept: Bogdan Florin Popovici · Dev: Dan Silviu Pura
+      <span class="separator">|</span>
+
+      <!-- GitHub -->
+      <a href="https://github.com/danpura"
+         target="_blank"
+         rel="noopener"
+         class="social-link"
+         title="GitHub">
+        <svg height="14" width="14" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
+        </svg>
+      </a>
+
+      <span class="separator">|</span>
+
+      <!-- Facebook Share -->
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdanpura.github.io%2FMaD-Suite-Simulator%2Findex.html"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="social-link"
+         title="Distribuie pe Facebook">
+        <svg height="14" width="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        Distribuie pe Facebook
+      </a>
+    </span>
+    <div class="author-line"></div>
+  </div>
+</footer>
   </div>
 
   <script>

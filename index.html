@@ -413,6 +413,13 @@
         transform: rotate(-90deg);
       }
     }
+	.oais-column {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: stretch;   /* ca Mail să aibă aceeași lățime ca oais-box */
+	  gap: 12px;
+	  max-width: 280px;       /* aceeași lățime ca .oais-box */
+}
   </style>
 </head>
 <body>
@@ -470,36 +477,38 @@
             <div class="flow-arrow">→</div>
           </div>
 
-<!-- OAIS -->
-          <div class="oais-box">
-            <div class="aip-box diagram-node"
-                 onmouseover="showDescription('ingestor')"
-                 onmouseout="hideDescription()"
-                 onclick="startApp('oais.html')">
-              <div class="diagram-node-inner diagram-node-inner--center">
-                <img class="diagram-icon" src="logo/logo3.png" alt="OAIS Logo">
-                <div>
-                  <div class="oais-title">MaD-OAIS</div>
-                  <div class="oais-subtitle">Ingestie, prezervare</div>
+          <!-- OAIS + Mail (coloană verticală) -->
+          <div class="oais-column">
+            <div class="oais-box">
+              <div class="aip-box diagram-node"
+                   onmouseover="showDescription('ingestor')"
+                   onmouseout="hideDescription()"
+                   onclick="startApp('oais.html')">
+                <div class="diagram-node-inner diagram-node-inner--center">
+                  <img class="diagram-icon" src="logo/logo3.png" alt="OAIS Logo">
+                  <div>
+                    <div class="oais-title">MaD-OAIS</div>
+                    <div class="oais-subtitle">Ingestie, prezervare</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Derivator -->
+              <div class="aip-box diagram-node"
+                   onmouseover="showDescription('derivator')"
+                   onmouseout="hideDescription()"
+                   onclick="startApp('derivate.html')">
+                <div class="diagram-node-inner diagram-node-inner--center">
+                  <img class="diagram-icon" src="logo/logo4.png" alt="Derivator Logo">
+                  <div>
+                    <div class="aip-title">MaD-Derivator</div>
+                    <div class="aip-subtitle">Derivate de acces</div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Derivator -->
-            <div class="aip-box diagram-node"
-                 onmouseover="showDescription('derivator')"
-                 onmouseout="hideDescription()"
-                 onclick="startApp('derivate.html')">
-              <div class="diagram-node-inner diagram-node-inner--center">
-                <img class="diagram-icon" src="logo/logo4.png" alt="Derivator Logo">
-                <div>
-                  <div class="aip-title">MaD-Derivator</div>
-                  <div class="aip-subtitle">Derivate de acces</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- MaD-Mail -->
+            <!-- MaD-Mail (sub OAIS box) -->
             <div class="aip-box diagram-node"
                  onmouseover="showDescription('mail')"
                  onmouseout="hideDescription()"
@@ -686,12 +695,14 @@
                  "• <strong>Control dimensional</strong> – formate A4, A3, A5, Letter, Legal sau dimensiuni personalizate, cu păstrarea proporțiilor.<br>" +
                  "• <strong>Split PDF</strong> – fragmentarea documentelor după numărul de pagini sau după dimensiunea estimată în MB.",
 
-      mail: "Aplicație desktop Electron pentru arhivarea și prezervarea mesajelor electronice (email) conform standardelor de conservare digitală.<br><br>" +
-            "• <strong>Import multi-format</strong> – suport pentru mbox, eml, pst, msg<br>" +
-            "• <strong>Normalizare</strong> – conversie în format de arhivă (EML + metadate)<br>" +
-            "• <strong>Extragere metadate</strong> – expeditor, destinatari, subiect, dată, atașamente<br>" +
-            "• <strong>Integritate</strong> – hashing SHA-256 pentru fiecare mesaj și atașament<br>" +
-            "• <strong>Căutare și filtrare</strong> – indexare full-text a conținutului mesajelor."
+      mail: "Aplicație desktop Electron pentru arhivarea, căutarea și exportul mesajelor electronice, rulând 100% local.<br><br>" +
+            "• <strong>Import multi-format</strong> – .pst (Outlook), .eml, .msg, .mbox (Thunderbird, Google Takeout)<br>" +
+            "• <strong>Arhivare locală</strong> – bază de date SQLite cu deduplicare automată SHA-256 extins (subiect, expeditor, dată, body, Message-ID, atașamente)<br>" +
+            "• <strong>Decizie manuală duplicate</strong> – păstrează ambele sau șterge duplicatul, cu comparare side-by-side<br>" +
+            "• <strong>Căutare avansată</strong> – subiect, expeditor, destinatari, corp, nume atașamente + filtre pe profil, folder, dată, mărime<br>" +
+            "• <strong>Vizualizare detaliată</strong> – metadate tehnice complete (Message-ID, headers SMTP, priorități, categorii)<br>" +
+            "• <strong>Export în 9 formate</strong> – .eml, .msg, .mht, .txt, .html, .pdf, .mbox, .vcf, CSV, cu structuri flexibile de foldere<br>" +
+            "• <strong>Administrare arhivă</strong> – compactare (VACUUM), verificare integritate, curățare",
     };
 
     function showDescription(type) {
